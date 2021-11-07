@@ -133,6 +133,34 @@
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/alacrity-dev*:*:*"
                     }
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:DeleteItem",
+                    "dynamodb:GetItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:PutItem"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "AlacrityTable",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "execute-api:ManageConnections"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:execute-api:*:*:*/@connections/*"
+                    }
+                  ]
                 }
               ]
             }
@@ -161,7 +189,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/alacrity/dev/1636243566479-2021-11-07T00:06:06.479Z/alacrity.zip"
+          "S3Key": "serverless/alacrity/dev/1636250217892-2021-11-07T01:56:57.892Z/alacrity.zip"
         },
         "Handler": "src/functions/hello/handler.main",
         "Runtime": "nodejs14.x",
@@ -170,7 +198,25 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
-            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "CARDS_BUCKET_NAME": "alacrity-cards-dev",
+            "TABLE_NAME": "alacrity-dev",
+            "WS_ENDPOINT": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "WebsocketsApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".amazonaws.com/",
+                  "dev"
+                ]
+              ]
+            }
           }
         },
         "Role": {
@@ -184,143 +230,63 @@
         "HelloLogGroup"
       ]
     },
-    "HelloLambdaVersion8rBWu9gslRaskv5ZwwWVhiWiPqzRnvBYoOOJMyBg": {
+    "HelloLambdaVersionvlMVi7uoNDv396t5OgwP1FPzyCXi4LhZPtkm6Us9YQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "HelloLambdaFunction"
         },
-        "CodeSha256": "Y6rQFvL2yycPc8BKIpEMer5eQtZUDKRK3hMlzV+hQIw="
+        "CodeSha256": "yiF8r3OGhow3GlpHRk6qh9hYpMrn6OuhG5akz+aJdjY="
       }
     },
-    "ApiGatewayRestApi": {
-      "Type": "AWS::ApiGateway::RestApi",
+    "WebsocketsApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
       "Properties": {
-        "Name": "alacrity-dev",
-        "EndpointConfiguration": {
-          "Types": [
-            "EDGE"
-          ]
-        },
-        "Policy": "",
-        "MinimumCompressionSize": 1024
+        "Name": "dev-alacrity-websockets",
+        "RouteSelectionExpression": "$request.body.action",
+        "Description": "Serverless Websockets",
+        "ProtocolType": "WEBSOCKET"
       }
     },
-    "ApiGatewayResourceHello": {
-      "Type": "AWS::ApiGateway::Resource",
+    "HelloWebsocketsIntegration": {
+      "Type": "AWS::ApiGatewayV2::Integration",
       "Properties": {
-        "ParentId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
+        "ApiId": {
+          "Ref": "WebsocketsApi"
         },
-        "PathPart": "hello",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodHelloPost": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "HttpMethod": "POST",
-        "RequestParameters": {},
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceHello"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "ApiKeyRequired": false,
-        "AuthorizationType": "NONE",
-        "Integration": {
-          "IntegrationHttpMethod": "POST",
-          "Type": "AWS_PROXY",
-          "Uri": {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition"
-                },
-                ":apigateway:",
-                {
-                  "Ref": "AWS::Region"
-                },
-                ":lambda:path/2015-03-31/functions/",
-                {
-                  "Fn::GetAtt": [
-                    "HelloLambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "/invocations"
-              ]
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":apigateway:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":lambda:path/2015-03-31/functions/",
+              {
+                "Fn::GetAtt": [
+                  "HelloLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "/invocations"
             ]
-          }
-        },
-        "MethodResponses": [],
-        "RequestValidatorId": {
-          "Ref": "ApiGatewayAlacrityRequestValidator"
-        },
-        "RequestModels": {
-          "application/json": {
-            "Ref": "ApiGatewayMethodHelloPostApplicationJsonModel"
-          }
-        }
-      },
-      "DependsOn": [
-        "HelloLambdaPermissionApiGateway"
-      ]
-    },
-    "ApiGatewayAlacrityRequestValidator": {
-      "Type": "AWS::ApiGateway::RequestValidator",
-      "Properties": {
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "ValidateRequestBody": true,
-        "ValidateRequestParameters": true,
-        "Name": "alacrity-dev | Validate request body and querystring parameters"
-      }
-    },
-    "ApiGatewayMethodHelloPostApplicationJsonModel": {
-      "Type": "AWS::ApiGateway::Model",
-      "Properties": {
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "ContentType": "application/json",
-        "Schema": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name"
           ]
         }
       }
     },
-    "ApiGatewayDeployment1636243555021": {
-      "Type": "AWS::ApiGateway::Deployment",
-      "Properties": {
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "StageName": "dev"
-      },
-      "DependsOn": [
-        "ApiGatewayMethodHelloPost"
-      ]
-    },
-    "HelloLambdaPermissionApiGateway": {
+    "HelloLambdaPermissionWebsockets": {
       "Type": "AWS::Lambda::Permission",
+      "DependsOn": [
+        "WebsocketsApi",
+        "HelloLambdaFunction"
+      ],
       "Properties": {
         "FunctionName": {
           "Fn::GetAtt": [
@@ -329,31 +295,87 @@
           ]
         },
         "Action": "lambda:InvokeFunction",
-        "Principal": "apigateway.amazonaws.com",
-        "SourceArn": {
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
+    "SconnectWebsocketsRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "RouteKey": "$connect",
+        "AuthorizationType": "NONE",
+        "Target": {
           "Fn::Join": [
-            "",
+            "/",
             [
-              "arn:",
+              "integrations",
               {
-                "Ref": "AWS::Partition"
-              },
-              ":execute-api:",
-              {
-                "Ref": "AWS::Region"
-              },
-              ":",
-              {
-                "Ref": "AWS::AccountId"
-              },
-              ":",
-              {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "/*/*"
+                "Ref": "HelloWebsocketsIntegration"
+              }
             ]
           ]
         }
+      }
+    },
+    "WebsocketsDeploymentStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "StageName": "dev",
+        "Description": "Serverless Websockets",
+        "DeploymentId": {
+          "Ref": "WebsocketsDeploymentgKTu5aI0y8U1g7nP7flL6HfDL0KqWKsMXhKerVILseU"
+        }
+      }
+    },
+    "WebsocketsDeploymentgKTu5aI0y8U1g7nP7flL6HfDL0KqWKsMXhKerVILseU": {
+      "Type": "AWS::ApiGatewayV2::Deployment",
+      "DependsOn": [
+        "SconnectWebsocketsRoute"
+      ],
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "Description": "Serverless Websockets"
+      }
+    },
+    "AlacrityTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "alacrity-dev",
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE"
+          }
+        ]
+      }
+    },
+    "CardsBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "alacrity-cards-dev",
+        "AccessControl": "PublicRead"
       }
     }
   },
@@ -369,21 +391,21 @@
     "HelloLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "HelloLambdaVersion8rBWu9gslRaskv5ZwwWVhiWiPqzRnvBYoOOJMyBg"
+        "Ref": "HelloLambdaVersionvlMVi7uoNDv396t5OgwP1FPzyCXi4LhZPtkm6Us9YQ"
       },
       "Export": {
         "Name": "sls-alacrity-dev-HelloLambdaFunctionQualifiedArn"
       }
     },
-    "ServiceEndpoint": {
+    "ServiceEndpointWebsocket": {
       "Description": "URL of the service endpoint",
       "Value": {
         "Fn::Join": [
           "",
           [
-            "https://",
+            "wss://",
             {
-              "Ref": "ApiGatewayRestApi"
+              "Ref": "WebsocketsApi"
             },
             ".execute-api.",
             {
@@ -398,7 +420,7 @@
         ]
       },
       "Export": {
-        "Name": "sls-alacrity-dev-ServiceEndpoint"
+        "Name": "sls-alacrity-dev-ServiceEndpointWebsocket"
       }
     }
   }
