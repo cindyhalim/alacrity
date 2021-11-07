@@ -1,6 +1,7 @@
 import type { AWS } from "@serverless/typescript";
 
-import hello from "@functions/hello";
+import { hello } from "@functions";
+import { alacrityTable } from "@resources";
 
 const serverlessConfiguration: AWS = {
   service: "alacrity",
@@ -23,11 +24,40 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
+      TABLE_NAME: "alacrity-table-${self:provider.stage}",
+      WS_ENDPOINT: {
+        "Fn::Join": [
+          "",
+          [
+            { Ref: "WebsocketsApi" },
+            ".execute-api.",
+            { Ref: "AWS::Region" },
+            ".amazonaws.com/",
+            "dev",
+          ],
+        ],
+      },
     },
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: [
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:PutItem",
+        ],
+        Resource: [{ "Fn::GetAtt": ["TableName", "Arn"] }],
+      },
+    ],
     lambdaHashingVersion: "20201221",
   },
-  // import the function via paths
   functions: { hello },
+  resources: {
+    Resources: {
+      ...alacrityTable,
+    },
+  },
 };
 
 module.exports = serverlessConfiguration;
