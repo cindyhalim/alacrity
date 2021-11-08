@@ -5,7 +5,8 @@
       "@functions": ["src/functions/index"],
       "@libs": ["src/libs/index"],
       "@resources": ["src/resources/index"],
-      "@utils": ["src/utils/index"]
+      "@utils": ["src/utils/index"],
+      "@services": ["src/services/index"]
     }
   }
 }

@@ -8,7 +8,7 @@ interface CardsDataJSON {}
 const getCardsData = async (): Promise<CardsDataJSON | null> => {
   try {
     const s3Response = await s3
-      .getObject({ Bucket: config.bucketName, Key: config.articlesKey })
+      .getObject({ Bucket: config.bucketName, Key: config.cardsKey })
       .promise();
     return s3Response.Body
       ? JSON.parse(s3Response.Body.toString("utf-8"))

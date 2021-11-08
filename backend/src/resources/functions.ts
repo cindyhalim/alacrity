@@ -2,7 +2,7 @@ import { Serverless } from "@utils";
 
 export const functions: Serverless["functions"] = {
   onConnect: {
-    // handler: `src/functions/onConnect/handler.main`,
+    handler: `src/functions/onConnect.handler`,
     events: [
       {
         websocket: {
@@ -69,14 +69,14 @@ export const functions: Serverless["functions"] = {
   //     },
   //   ],
   // },
-  onDisconnect: {
-    handler: `src/functions/onDisconnect/handler.main`,
-    events: [
-      {
-        websocket: {
-          route: "$disconnect",
-        },
-      },
-    ],
-  },
+  // onDisconnect: {
+  //   handler: `src/functions/onDisconnect/handler.main`,
+  //   events: [
+  //     {
+  //       websocket: {
+  //         route: "$disconnect",
+  //       },
+  //     },
+  //   ],
+  // },
 };
