@@ -4,7 +4,7 @@ import {
   ValidatedEventAPIGatewayProxyEvent,
   formatJSONResponse,
   middyfy,
-} from "@libs";
+} from "@utils";
 
 import schema from "./schema";
 
