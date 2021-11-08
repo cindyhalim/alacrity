@@ -12,6 +12,7 @@ export const useWSConnection = () => {
   const dispatch = useDispatch()
 
   const { sendMessage } = useWebSocket(config.websocketUrl, {
+    //if multiple components pass the same socketUrl to useWebSocket then only a single WebSocket will be created
     share: true,
     onMessage: (message) => {
       const data: TBackendWebsocketEvent = JSON.parse(message.data)

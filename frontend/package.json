@@ -6,10 +6,6 @@
     "@testing-library/jest-dom": "5.15.0",
     "@testing-library/react": "11.2.7",
     "@testing-library/user-event": "12.8.3",
-    "@types/jest": "26.0.24",
-    "@types/node": "12.20.36",
-    "@types/react": "17.0.34",
-    "@types/react-dom": "17.0.11",
     "emotion-theming": "11.0.0",
     "env-var": "7.1.1",
     "react": "17.0.2",
@@ -47,6 +43,10 @@
   },
   "devDependencies": {
     "@types/react-redux": "7.1.20",
-    "@types/rebass": "4.0.10"
+    "@types/rebass": "4.0.10",
+    "@types/jest": "26.0.24",
+    "@types/node": "12.20.36",
+    "@types/react": "17.0.34",
+    "@types/react-dom": "17.0.11"
   }
 }
