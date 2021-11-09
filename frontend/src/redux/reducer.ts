@@ -1,7 +1,7 @@
 import { IGame, IRoom } from "src/types"
 import { ActionEnum, TAction } from "./actions"
 
-interface IState {
+export interface IState {
   playerId: string
   room: IRoom
   game: IGame | null

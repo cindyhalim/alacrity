@@ -1,3 +1,6 @@
+import { TypedUseSelectorHook, useSelector } from "react-redux"
+import { IState } from "./reducer"
+
 type FunctionType = (...args: any[]) => void
 interface IActionCreatorsMapObject {
   [actionCreator: string]: FunctionType
@@ -23,3 +26,5 @@ export function createAction<T extends string, P>(
 export function createAction<T extends string, P>(type: T, payload?: P) {
   return payload === undefined ? { type } : { type, payload }
 }
+
+export const useAppSelector: TypedUseSelectorHook<IState> = useSelector
