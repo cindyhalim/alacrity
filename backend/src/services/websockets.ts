@@ -1,22 +1,16 @@
 import { config } from "@utils";
 import * as AWS from "aws-sdk";
 
-type TWebsocketsAction = "player_id_set" | "room_updated" | "game_updated";
-
-type TWebsocketsBody<B> = {
-  action: TWebsocketsAction;
-} & B;
-
 const apig = new AWS.ApiGatewayManagementApi({
   endpoint: config.wsUrl,
 });
 
-const sendMessage = async <Body>({
+const sendMessage = async <B>({
   connectionId,
   body,
 }: {
   connectionId: string;
-  body: TWebsocketsBody<Body>;
+  body: B;
 }) => {
   try {
     await apig

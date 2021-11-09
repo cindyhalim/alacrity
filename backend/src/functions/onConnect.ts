@@ -3,9 +3,7 @@ import { APIGatewayEvent } from "aws-lambda";
 import { ws } from "@services";
 import { middyfy } from "@utils";
 
-interface IPlayerIdSetBody {
-  playerId: string;
-}
+import { IPlayerIdSetEvent, BackendWebsocketActions } from "alacrity-shared";
 
 const onConnect = async (event: APIGatewayEvent) => {
   const {
@@ -14,9 +12,12 @@ const onConnect = async (event: APIGatewayEvent) => {
   console.log("onConnect: recieved route key:", routeKey);
   console.log("connectionId:", connectionId);
 
-  await ws.sendMessage<IPlayerIdSetBody>({
+  await ws.sendMessage<IPlayerIdSetEvent>({
     connectionId,
-    body: { action: "player_id_set", playerId: connectionId },
+    body: {
+      action: BackendWebsocketActions.PlayerIdSet,
+      playerId: connectionId,
+    },
   });
 };
 

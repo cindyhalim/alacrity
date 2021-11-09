@@ -1,6 +1,8 @@
+import { IGame } from "alacrity-shared";
 import { config } from "@utils";
+
 import { dynamoDb } from "./dynamoDb";
-import { IDynamoDbItem, IGame } from "./types";
+import { IDynamoDbItem } from "./types";
 
 const getGamePk = (roomId: string) => `game:${roomId}`;
 const sk: IDynamoDbItem["sk"] = "game";
@@ -87,7 +89,7 @@ const deleteRoom = async ({ gameId }: { gameId: string }) => {
   }
 };
 
-export const game = {
+export default {
   get: getGame,
   create: createGame,
   update: updateGame,

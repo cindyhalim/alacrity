@@ -1,3 +1,4 @@
+// import { FrontendWebsocketActions } from "alacrity-shared";
 import { Serverless } from "@utils";
 
 export const functions: Serverless["functions"] = {
@@ -15,7 +16,7 @@ export const functions: Serverless["functions"] = {
   //   events: [
   //     {
   //       websocket: {
-  //         route: "room_created",
+  //         route: FrontendWebsocketActions.RoomCreated,
   //       },
   //     },
   //   ],
@@ -24,7 +25,7 @@ export const functions: Serverless["functions"] = {
   //   events: [
   //     {
   //       websocket: {
-  //         route: "player_joined",
+  //         route: FrontendWebsocketActions.PlayerJoined,
   //       },
   //     },
   //   ],
@@ -46,7 +47,7 @@ export const functions: Serverless["functions"] = {
   //   events: [
   //     {
   //       websocket: {
-  //         route: "card_drawn",
+  //         route: FrontendWebsocketActions.CardDrawn,
   //       },
   //     },
   //   ],
@@ -55,7 +56,7 @@ export const functions: Serverless["functions"] = {
   //   events: [
   //     {
   //       websocket: {
-  //         route: "card_won",
+  //         route: FrontendWebsocketActions.CardWon,
   //       },
   //     },
   //   ],
@@ -64,7 +65,7 @@ export const functions: Serverless["functions"] = {
   //   events: [
   //     {
   //       websocket: {
-  //         route: "game_ended",
+  //         route: FrontendWebsocketActions.GameEnded,
   //       },
   //     },
   //   ],
@@ -74,7 +75,7 @@ export const functions: Serverless["functions"] = {
   //   events: [
   //     {
   //       websocket: {
-  //         route: "$disconnect",
+  //         route: FrontendWebsocketActions.Disconnected,
   //       },
   //     },
   //   ],

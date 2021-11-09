@@ -1,6 +1,7 @@
+import { IPlayer, IRoom } from "alacrity-shared";
 import { config } from "@utils";
 import { dynamoDb } from "./dynamoDb";
-import { IPlayer, IRoom, IDynamoDbItem } from "./types";
+import { IDynamoDbItem } from "./types";
 
 const getRoomPk = (roomId: string) => `room:${roomId}`;
 const sk: IDynamoDbItem["sk"] = "room";
@@ -33,16 +34,16 @@ const getRoom = async ({
 
 const createRoom = async ({
   roomId,
-  admin,
+  startingPlayer,
 }: {
   roomId: string;
-  admin: IPlayer;
+  startingPlayer: IPlayer;
 }) => {
   try {
     const pk = getRoomPk(roomId);
     const attributes: IRoom = {
       id: roomId,
-      players: [admin],
+      players: [startingPlayer],
       gameIds: [],
     };
     await dynamoDb
@@ -61,12 +62,12 @@ const createRoom = async ({
   }
 };
 
-const addPlayer = async ({
+const updatePlayer = async ({
   roomId,
-  player,
+  players,
 }: {
   roomId: string;
-  player: IPlayer;
+  players: IPlayer[];
 }) => {
   try {
     const pk = getRoomPk(roomId);
@@ -78,16 +79,16 @@ const addPlayer = async ({
           sk,
         },
         UpdateExpression: "set attributes.players = :players",
-        ExpressionAttributeValues: { ":players": player },
+        ExpressionAttributeValues: { ":players": players },
       })
       .promise();
   } catch (e) {
-    console.log(`Error adding player ${player.id} to db`, e.message);
+    console.log(`Error updating players to db`, e.message);
     throw e;
   }
 };
 
-const addGame = async ({
+const updateGame = async ({
   roomId,
   gameId,
 }: {
@@ -108,7 +109,7 @@ const addGame = async ({
       })
       .promise();
   } catch (e) {
-    console.log(`Error adding game ${gameId} to db`, e.message);
+    console.log(`Error updating game ${gameId} to db`, e.message);
     throw e;
   }
 };
@@ -131,10 +132,10 @@ const deleteRoom = async ({ roomId }: { roomId: string }) => {
   }
 };
 
-export const room = {
+export default {
   create: createRoom,
-  addGame,
-  addPlayer,
+  updateGame,
+  updatePlayer,
   get: getRoom,
   delete: deleteRoom,
 };

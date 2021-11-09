@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "target": "ES2020",
+    "rootDir": "./src",
+    "outDir": "lib"
+  },
+  "include": ["./src"],
+  "exclude": [
+    "node_modules"
+  ],
+}
