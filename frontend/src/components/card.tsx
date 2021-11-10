@@ -100,12 +100,13 @@ export const Card: React.FC<ICardProps> = ({
             backgroundColor: color,
             justifyContent: "center",
             alignItems: "center",
+            position: "relative",
             ...innerCardStyles,
           }}
         >
           <Image
             src={CardBackground}
-            sx={{ position: "absolute", height: "85%", width: "85%" }}
+            sx={{ position: "absolute", height: "90%", width: "90%" }}
           />
           <Text
             sx={{
