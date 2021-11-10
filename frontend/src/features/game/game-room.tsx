@@ -1,19 +1,19 @@
-import React from "react";
-import { Box, Flex } from "rebass";
-import { CardEmptyState } from "src/components/card-empty-state";
+import React from "react"
+import { Box, Flex } from "rebass"
+import { CardEmptyState } from "src/components/card-empty-state"
 
-import { useAppSelector } from "src/redux/utils";
-import { theme } from "src/theme";
-import { CardSymbol } from "src/types";
-import { Card } from "../../components/card";
-import { PlayerBlock } from "./player-block";
+import { useAppSelector } from "src/redux/utils"
+import { theme } from "src/theme"
+import { CardSymbol } from "src/types"
+import { Card } from "../../components/card"
+import { PlayerBlock } from "./player-block"
 
 export const GameRoom: React.FC = () => {
-  const players = useAppSelector((state) => state.players);
-  const playerId = useAppSelector((state) => state.playerId);
+  const players = useAppSelector((state) => state.players)
+  const playerId = useAppSelector((state) => state.playerId)
 
-  const opponentPlayers = players.filter((player) => player.id !== playerId);
-  const player = players.find((player) => player.id === playerId);
+  const opponentPlayers = players.filter((player) => player.id !== playerId)
+  const player = players.find((player) => player.id === playerId)
 
   return (
     <Box
@@ -52,5 +52,5 @@ export const GameRoom: React.FC = () => {
       </Flex>
       <PlayerBlock player={player} isMe={true} />
     </Box>
-  );
-};
+  )
+}

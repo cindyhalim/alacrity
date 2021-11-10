@@ -1,25 +1,25 @@
-import React from "react";
-import { Flex, Image, SxStyleProp, Text } from "rebass";
-import { theme } from "../theme";
-import { CardSymbol } from "../types";
+import React from "react"
+import { Flex, Image, SxStyleProp, Text } from "rebass"
+import { theme } from "../theme"
+import { CardSymbol } from "../types"
 
-import Circle from "src/assets/circle.svg";
-import Diamond from "src/assets/diamond.svg";
-import Dots from "src/assets/dots.svg";
-import Hash from "src/assets/hash.svg";
-import Pause from "src/assets/pause.svg";
-import Plus from "src/assets/plus.svg";
-import Star from "src/assets/star.svg";
-import Wave from "src/assets/wave.svg";
-import CardBackground from "src/assets/card-background.svg";
+import Circle from "src/assets/circle.svg"
+import Diamond from "src/assets/diamond.svg"
+import Dots from "src/assets/dots.svg"
+import Hash from "src/assets/hash.svg"
+import Pause from "src/assets/pause.svg"
+import Plus from "src/assets/plus.svg"
+import Star from "src/assets/star.svg"
+import Wave from "src/assets/wave.svg"
+import CardBackground from "src/assets/card-background.svg"
 
-export type TCardSize = "small" | "medium" | "large";
+export type TCardSize = "small" | "medium" | "large"
 interface ICardProps {
-  symbol: CardSymbol;
-  text: string;
-  side?: "front" | "back";
-  size?: TCardSize;
-  containerSx?: SxStyleProp;
+  symbol: CardSymbol
+  text: string
+  side?: "front" | "back"
+  size?: TCardSize
+  containerSx?: SxStyleProp
 }
 
 const symbolToImg: { [key in CardSymbol]: string } = {
@@ -31,7 +31,7 @@ const symbolToImg: { [key in CardSymbol]: string } = {
   PLUS: Plus,
   STAR: Star,
   WAVE: Wave,
-};
+}
 
 const CARD_COLORS = [
   theme.colors.black,
@@ -39,19 +39,19 @@ const CARD_COLORS = [
   theme.colors.orange,
   theme.colors.red,
   theme.colors.sand,
-];
+]
 
 export const getStylesFromSize = (size: TCardSize) => {
   switch (size) {
     case "large":
-      return theme.styles.largeCard;
+      return theme.styles.largeCard
     case "medium":
-      return theme.styles.mediumCard;
+      return theme.styles.mediumCard
     case "small":
     default:
-      return theme.styles.smallCard;
+      return theme.styles.smallCard
   }
-};
+}
 
 export const Card: React.FC<ICardProps> = ({
   symbol,
@@ -65,9 +65,9 @@ export const Card: React.FC<ICardProps> = ({
     innerCard: innerCardStyles,
     symbol: symbolStyles,
     fontSize,
-  } = getStylesFromSize(size);
+  } = getStylesFromSize(size)
 
-  const color = CARD_COLORS[Math.floor(Math.random() * CARD_COLORS.length)];
+  const color = CARD_COLORS[Math.floor(Math.random() * CARD_COLORS.length)]
 
   return (
     <Flex
@@ -119,12 +119,12 @@ export const Card: React.FC<ICardProps> = ({
         </Flex>
       )}
     </Flex>
-  );
-};
+  )
+}
 
 interface ICardTextProps {
-  upsideDown?: boolean;
-  fontSize?: number;
+  upsideDown?: boolean
+  fontSize?: number
 }
 
 const CardText: React.FC<ICardTextProps> = ({
@@ -146,5 +146,5 @@ const CardText: React.FC<ICardTextProps> = ({
     >
       {children}
     </Text>
-  );
-};
+  )
+}

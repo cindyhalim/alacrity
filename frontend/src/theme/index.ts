@@ -32,4 +32,4 @@ export const theme = {
       fontSize: { back: 26, front: 20 },
     },
   },
-};
+}

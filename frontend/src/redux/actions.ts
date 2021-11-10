@@ -1,5 +1,5 @@
-import { IRoom } from "alacrity-shared";
-import { createAction, TActionsUnion } from "./utils";
+import { IRoom } from "alacrity-shared"
+import { createAction, TActionsUnion } from "./utils"
 
 export enum ActionEnum {
   UPDATE_GAME = "UPDATE_GAME",
@@ -10,6 +10,6 @@ export enum ActionEnum {
 export const actions = {
   updateRoom: (room: IRoom) => createAction(ActionEnum.UPDATE_ROOM, room),
   setPlayerId: (id: string) => createAction(ActionEnum.SET_PLAYER_ID, id),
-};
+}
 
-export type TAction = TActionsUnion<typeof actions>;
+export type TAction = TActionsUnion<typeof actions>

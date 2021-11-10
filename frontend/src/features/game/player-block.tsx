@@ -1,31 +1,31 @@
-import { IPlayer, IPlayingCard } from "alacrity-shared";
-import React from "react";
-import { Flex, Text } from "rebass";
-import { theme } from "src/theme";
-import { CardEmptyState } from "../../components/card-empty-state";
-import { Card } from "../../components/card";
+import { IPlayer, IPlayingCard } from "alacrity-shared"
+import React from "react"
+import { Flex, Text } from "rebass"
+import { theme } from "src/theme"
+import { CardEmptyState } from "../../components/card-empty-state"
+import { Card } from "../../components/card"
 
 interface IPlayerBlockProps {
-  player?: IPlayer;
-  isMe: boolean;
+  player?: IPlayer
+  isMe: boolean
 }
 
 interface IMeBlockProps {
-  card?: IPlayingCard;
+  card?: IPlayingCard
 }
 interface IOpponentBlockProps extends IMeBlockProps {
-  playerName: string;
+  playerName: string
 }
 
 export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isMe }) => {
-  const playPile = player?.playPile;
-  const card = playPile ? playPile[playPile.length - 1] : undefined;
+  const playPile = player?.playPile
+  const card = playPile ? playPile[playPile.length - 1] : undefined
   return isMe ? (
     <MeBlock card={card} />
   ) : (
     <OpponentBlock playerName={player?.name || ""} card={card} />
-  );
-};
+  )
+}
 
 const OpponentBlock: React.FC<IOpponentBlockProps> = ({ playerName, card }) => {
   return (
@@ -52,8 +52,8 @@ const OpponentBlock: React.FC<IOpponentBlockProps> = ({ playerName, card }) => {
         <CardEmptyState size={"small"} />
       )}
     </Flex>
-  );
-};
+  )
+}
 
 const MeBlock: React.FC<IMeBlockProps> = ({ card }) => (
   <Flex
@@ -66,4 +66,4 @@ const MeBlock: React.FC<IMeBlockProps> = ({ card }) => (
   >
     {card ? <Card {...card} size={"large"} side={"front"} /> : null}
   </Flex>
-);
+)
