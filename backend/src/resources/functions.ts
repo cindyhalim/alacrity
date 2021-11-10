@@ -71,7 +71,7 @@ export const functions: Serverless["functions"] = {
   //   ],
   // },
   onDisconnect: {
-    handler: `src/functions/onDisconnect/handler.main`,
+    handler: `src/functions/onDisconnect.handler`,
     events: [
       {
         websocket: {
