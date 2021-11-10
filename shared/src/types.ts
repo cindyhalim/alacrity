@@ -1,4 +1,4 @@
-// Models
+// Shared models
 export enum CardSymbol {
   DIAMOND = "DIAMOND",
   WAVE = "WAVE",
@@ -10,42 +10,31 @@ export enum CardSymbol {
   HASH = "HASH",
 }
 
-interface IPlayingCard {
+export interface IPlayingCard {
   type: "playing";
   symbol: CardSymbol;
   text: string;
 }
 
-interface IWildCard {
+export interface IWildCard {
   type: "wildCard";
   symbols: CardSymbol[];
 }
 
-export type TCard = IPlayingCard | IWildCard;
-
-export interface IGame {
-  id: string;
-  players: IGamePlayer[];
-  drawPile: TCard[];
-  wildCardPile: TCard[];
-  status: "started" | "ended";
-  currentPlayerId: string;
-}
-
 export interface IRoom {
   id: string;
-  players: IPlayer[];
-  gameIds: string[];
-}
-
-export interface IPlayer {
-  id: string;
-  name: string;
-}
-
-export interface IGamePlayer extends IPlayer {
-  winningPile: TCard[];
-  playPile: TCard[];
+  players: {
+    id: string;
+    name: string;
+    points?: number;
+    playPile?: IPlayingCard[];
+  }[];
+  game: {
+    id: string;
+    totalDrawCardsRemaining: number;
+    wildCard: IWildCard;
+    currentPlayerId: string;
+  } | null;
 }
 
 // Websockets
@@ -63,7 +52,6 @@ export enum FrontendWebsocketActions {
   CardDrawn = "card_drawn",
   CardWon = "card_won",
   GameEnded = "game_ended",
-  Disconnected = "disconnected",
 }
 
 // Backend events
@@ -77,15 +65,7 @@ export interface IRoomUpdatedEvent {
   room: IRoom;
 }
 
-export interface IGameUpdatedEvent {
-  action: BackendWebsocketActions.GameUpdated;
-  game: IGame;
-}
-
-export type TBackendWebsocketEvent =
-  | IPlayerIdSetEvent
-  | IRoomUpdatedEvent
-  | IGameUpdatedEvent;
+export type TBackendWebsocketEvent = IPlayerIdSetEvent | IRoomUpdatedEvent;
 
 // Frontend events
 
@@ -120,16 +100,10 @@ export interface IGameEndedEvent {
   action: FrontendWebsocketActions.GameEnded;
 }
 
-export interface IDisconnected {
-  action: FrontendWebsocketActions.Disconnected;
-  roomId: string;
-}
-
 export type TFrontendWebsocketEvent =
   | IRoomCreatedEvent
   | IPlayerJoinedEvent
   | IGameStartedEvent
   | ICardDrawnEvent
   | ICardWonEvent
-  | IGameEndedEvent
-  | IDisconnected;
+  | IGameEndedEvent;

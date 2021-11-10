@@ -70,14 +70,14 @@ export const functions: Serverless["functions"] = {
   //     },
   //   ],
   // },
-  // onDisconnect: {
-  //   handler: `src/functions/onDisconnect/handler.main`,
-  //   events: [
-  //     {
-  //       websocket: {
-  //         route: FrontendWebsocketActions.Disconnected,
-  //       },
-  //     },
-  //   ],
-  // },
+  onDisconnect: {
+    handler: `src/functions/onDisconnect/handler.main`,
+    events: [
+      {
+        websocket: {
+          route: "$disconnect",
+        },
+      },
+    ],
+  },
 };

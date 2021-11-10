@@ -1,60 +1,59 @@
-import { BackendWebsocketActions, IDisconnected } from "alacrity-shared";
+import { APIGatewayEvent } from "aws-lambda";
+import { BackendWebsocketActions } from "alacrity-shared";
 
-import { room as roomDb, game as gameDb, ws } from "@services";
-import { middyfy, ValidatedAPIGatewayEvent } from "@utils";
+import { getGame, getPlayers, getSerializedRoom, middyfy } from "@utils";
+import { database, ws } from "@services";
 
-const onDisconnect = async (event: ValidatedAPIGatewayEvent<IDisconnected>) => {
+const onDisconnect = async (event: APIGatewayEvent) => {
   const {
     requestContext: { routeKey, connectionId },
   } = event;
 
-  const { roomId } = event.body;
-
   console.log("onDisconnect: recieved route key:", routeKey);
   console.log("connectionId:", connectionId);
 
-  const room = await roomDb.get({ roomId });
+  const roomId = (await database.connection.get({ connectionId })).roomId;
+  const room = await database.room.get({ roomId });
 
-  if (!room) {
-    console.log("No room found, skipping...");
+  if (!roomId) {
     return;
   }
-  const totalPlayers = room.players.length;
-  const gameId = room.gameIds[room.gameIds.length - 1] || "";
 
-  if (gameId) {
-    const game = await gameDb.get({ gameId });
-    const players = game.players.filter(({ id }) => id !== connectionId);
-    const updatedGame = { ...game, players };
+  if (room) {
+    const player = getPlayers(room).find(
+      (item) => item.player.id === connectionId
+    );
+    const game = getGame(room);
+    const totalPlayers = game.players.length;
+    const remainingPlayers = game.players.filter(
+      (player) => player.id !== connectionId
+    );
+    const updatedGame = { ...game, players: remainingPlayers };
 
-    totalPlayers === 1
-      ? await Promise.all([gameDb.delete({ gameId })])
-      : await Promise.all([
-          gameDb.update(updatedGame),
-          ws.sendMessage({
-            connectionId,
-            body: {
-              action: BackendWebsocketActions.GameUpdated,
-              game: updatedGame,
-            },
-          }),
-        ]);
-  }
+    if (player) {
+      await database.room.deletePlayer({ roomId, playerId: connectionId });
+    }
 
-  const players = room.players.filter(({ id }) => id !== connectionId);
-  const updatedRoom = { ...room, players };
-  totalPlayers === 1
-    ? await roomDb.delete({ roomId })
-    : await Promise.all([
-        roomDb.updatePlayer({ roomId, players }),
+    if (game) {
+      totalPlayers === 1
+        ? await database.room.deleteGame({ roomId, gameId: game.id })
+        : await database.room.updateGame({ roomId, game: updatedGame });
+    }
+
+    await Promise.all(
+      remainingPlayers.map(() =>
         ws.sendMessage({
           connectionId,
           body: {
             action: BackendWebsocketActions.RoomUpdated,
-            room: updatedRoom,
+            room: getSerializedRoom({ roomId }),
           },
-        }),
-      ]);
+        })
+      )
+    );
+  }
+
+  return await database.connection.delete({ connectionId });
 };
 
 export const handler = middyfy(onDisconnect);

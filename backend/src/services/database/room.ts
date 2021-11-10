@@ -1,29 +1,48 @@
-import { IPlayer, IRoom } from "alacrity-shared";
 import { config } from "@utils";
 import { dynamoDb } from "./dynamoDb";
-import { IDynamoDbItem } from "./types";
+import { IGame, IPlayer, IRoomIndex, TRoomItems } from "./types";
 
-const getRoomPk = (roomId: string) => `room:${roomId}`;
-const sk: IDynamoDbItem["sk"] = "room";
+const getPlayerIndexes = ({
+  playerId,
+  roomId,
+}: {
+  playerId: string;
+  roomId: string;
+}): IRoomIndex => ({
+  pk: `room_${roomId}`,
+  sk: `player_${playerId}`,
+});
 
-const getRoom = async ({
+const getGameIndexes = ({
+  gameId,
+  roomId,
+}: {
+  gameId: string;
+  roomId: string;
+}): IRoomIndex => ({
+  pk: `room_${roomId}`,
+  sk: `game_${gameId}`,
+});
+
+const getRoomItems = async ({
   roomId,
 }: {
   roomId: string;
-}): Promise<IRoom | null> => {
+}): Promise<TRoomItems | null> => {
   try {
-    const pk = getRoomPk(roomId);
+    const pk: IRoomIndex["pk"] = `room_${roomId}`;
     const response = await dynamoDb
-      .get({
+      .query({
         TableName: config.dynamoDbTableName,
-        Key: {
-          pk,
-          sk,
+        IndexName: "pk",
+        KeyConditionExpression: `pk = :pk`,
+        ExpressionAttributeValues: {
+          ":pk": pk,
         },
       })
       .promise();
 
-    if (response.Item) return response.Item as IRoom;
+    if (response.Items) return response.Items as TRoomItems;
 
     return null;
   } catch (e) {
@@ -32,63 +51,7 @@ const getRoom = async ({
   }
 };
 
-const createRoom = async ({
-  roomId,
-  startingPlayer,
-}: {
-  roomId: string;
-  startingPlayer: IPlayer;
-}) => {
-  try {
-    const pk = getRoomPk(roomId);
-    const attributes: IRoom = {
-      id: roomId,
-      players: [startingPlayer],
-      gameIds: [],
-    };
-    await dynamoDb
-      .put({
-        TableName: config.dynamoDbTableName,
-        Item: {
-          pk,
-          sk,
-          attributes,
-        },
-      })
-      .promise();
-  } catch (e) {
-    console.log(`Error adding room ${roomId} to db`, e.message);
-    throw e;
-  }
-};
-
-const updatePlayer = async ({
-  roomId,
-  players,
-}: {
-  roomId: string;
-  players: IPlayer[];
-}) => {
-  try {
-    const pk = getRoomPk(roomId);
-    await dynamoDb
-      .update({
-        TableName: config.dynamoDbTableName,
-        Key: {
-          pk,
-          sk,
-        },
-        UpdateExpression: "set attributes.players = :players",
-        ExpressionAttributeValues: { ":players": players },
-      })
-      .promise();
-  } catch (e) {
-    console.log(`Error updating players to db`, e.message);
-    throw e;
-  }
-};
-
-const updateGame = async ({
+const deleteGame = async ({
   roomId,
   gameId,
 }: {
@@ -96,27 +59,9 @@ const updateGame = async ({
   gameId: string;
 }) => {
   try {
-    const pk = getRoomPk(roomId);
-    await dynamoDb
-      .update({
-        TableName: config.dynamoDbTableName,
-        Key: {
-          pk,
-          sk,
-        },
-        UpdateExpression: "set attributes.gameIds = :games",
-        ExpressionAttributeValues: { ":games": gameId },
-      })
-      .promise();
-  } catch (e) {
-    console.log(`Error updating game ${gameId} to db`, e.message);
-    throw e;
-  }
-};
+    const pk: IRoomIndex["pk"] = `room_${roomId}`;
+    const sk: IRoomIndex["sk"] = `game_${gameId}`;
 
-const deleteRoom = async ({ roomId }: { roomId: string }) => {
-  try {
-    const pk = getRoomPk(roomId);
     await dynamoDb
       .delete({
         TableName: config.dynamoDbTableName,
@@ -127,15 +72,112 @@ const deleteRoom = async ({ roomId }: { roomId: string }) => {
       })
       .promise();
   } catch (e) {
-    console.log(`Error deleting room ${roomId} from db`, e.message);
+    console.log(`Error deleting room ${roomId}`, e.message);
     throw e;
   }
 };
 
-export default {
-  create: createRoom,
+const updateGame = async ({
+  roomId,
+  game,
+}: {
+  roomId: string;
+  game: IGame;
+}) => {
+  try {
+    const { pk, sk } = getGameIndexes({ gameId: game.id, roomId });
+    await dynamoDb
+      .update({
+        TableName: config.dynamoDbTableName,
+        Key: {
+          pk,
+          sk,
+        },
+        UpdateExpression: "set game = :game",
+        ExpressionAttributeValues: {
+          game,
+        },
+      })
+      .promise();
+  } catch (e) {
+    console.log(`Error updating game ${game.id} for`, e.message);
+    throw e;
+  }
+};
+
+const addGame = async ({ roomId, game }: { roomId: string; game: IGame }) => {
+  try {
+    const { pk, sk } = getGameIndexes({ gameId: game.id, roomId });
+    await dynamoDb
+      .put({
+        TableName: config.dynamoDbTableName,
+        Item: {
+          pk,
+          sk,
+          game,
+        },
+      })
+      .promise();
+  } catch (e) {
+    console.log(`Error creating game ${game.id} for`, e.message);
+    throw e;
+  }
+};
+
+const addPlayer = async ({
+  roomId,
+  player,
+}: {
+  roomId: string;
+  player: IPlayer;
+}) => {
+  try {
+    const { pk, sk } = getPlayerIndexes({ roomId, playerId: player.id });
+    await dynamoDb
+      .put({
+        TableName: config.dynamoDbTableName,
+        Item: {
+          pk,
+          sk,
+          player,
+        },
+      })
+      .promise();
+  } catch (e) {
+    console.log(`Error adding player ${player.id}`, e.message);
+    throw e;
+  }
+};
+
+const deletePlayer = async ({
+  roomId,
+  playerId,
+}: {
+  roomId: string;
+  playerId: string;
+}) => {
+  try {
+    const { pk, sk } = getPlayerIndexes({ roomId, playerId });
+    await dynamoDb
+      .delete({
+        TableName: config.dynamoDbTableName,
+        Key: {
+          pk,
+          sk,
+        },
+      })
+      .promise();
+  } catch (e) {
+    console.log(`Error updating players to db`, e.message);
+    throw e;
+  }
+};
+
+export const room = {
+  get: getRoomItems,
+  addPlayer,
+  deletePlayer,
+  addGame,
   updateGame,
-  updatePlayer,
-  get: getRoom,
-  delete: deleteRoom,
+  deleteGame,
 };
