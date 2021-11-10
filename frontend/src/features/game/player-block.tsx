@@ -60,7 +60,7 @@ const MeBlock: React.FC<IMeBlockProps> = ({ card }) => (
     sx={{
       width: "100%",
       position: "absolute",
-      bottom: -50,
+      bottom: -60,
       justifyContent: "center",
     }}
   >

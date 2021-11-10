@@ -21,6 +21,8 @@ export const GameRoom: React.FC = () => {
         bg: theme.colors.lightBg,
         width: "100vw",
         height: "100vh",
+        position: "relative",
+        overflowY: "hidden",
         paddingX: 10,
         paddingTop: 15,
       }}
