@@ -1,43 +1,37 @@
-import { IGame, IRoom } from "src/types"
-import { ActionEnum, TAction } from "./actions"
+import { IPlayer, IGame } from "alacrity-shared";
+import { ActionEnum, TAction } from "./actions";
 
-interface IState {
-  playerId: string
-  room: IRoom
-  game: IGame | null
-}
-
-const initialRoomState: IRoom = {
-  id: "",
-  players: [],
-  gameIds: [],
+export interface IState {
+  playerId: string;
+  roomId: string;
+  players: IPlayer[];
+  game: IGame | null;
 }
 
 const initialState: IState = {
   playerId: "",
-  room: initialRoomState,
+  roomId: "",
+  players: [],
   game: null,
-}
+};
 
 export const reducer = (state = initialState, action: TAction): IState => {
   switch (action.type) {
-    case ActionEnum.UPDATE_GAME:
-      return {
-        ...state,
-        game: action.payload,
-      }
-
     case ActionEnum.UPDATE_ROOM:
       return {
         ...state,
-        room: action.payload,
-      }
+        roomId: action.payload.id,
+        players: { ...state.players, ...action.payload.players },
+        game: action.payload.game
+          ? { ...state.game, ...action.payload.game }
+          : null,
+      };
     case ActionEnum.SET_PLAYER_ID:
       return {
         ...state,
         playerId: action.payload,
-      }
+      };
     default:
-      return state
+      return state;
   }
-}
+};

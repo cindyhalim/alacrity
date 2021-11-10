@@ -21,20 +21,23 @@ export interface IWildCard {
   symbols: CardSymbol[];
 }
 
+export interface IPlayer {
+  id: string;
+  name: string;
+  points?: number;
+  playPile?: IPlayingCard[];
+}
+
+export interface IGame {
+  id: string;
+  totalDrawCardsRemaining: number;
+  wildCard: IWildCard;
+  currentPlayerId: string;
+}
 export interface IRoom {
   id: string;
-  players: {
-    id: string;
-    name: string;
-    points?: number;
-    playPile?: IPlayingCard[];
-  }[];
-  game: {
-    id: string;
-    totalDrawCardsRemaining: number;
-    wildCard: IWildCard;
-    currentPlayerId: string;
-  } | null;
+  players: IPlayer[];
+  game: IGame | null;
 }
 
 // Websockets
