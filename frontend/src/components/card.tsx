@@ -1,7 +1,7 @@
 import React from "react"
 import { Flex, Image, SxStyleProp, Text } from "rebass"
 import { theme } from "../theme"
-import { CardSymbol } from "../types"
+import { CardSymbol } from "alacrity-shared"
 
 import Circle from "src/assets/circle.svg"
 import Diamond from "src/assets/diamond.svg"

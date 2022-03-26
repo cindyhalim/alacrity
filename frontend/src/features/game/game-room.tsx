@@ -4,12 +4,12 @@ import { CardEmptyState } from "src/components/card-empty-state"
 
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
-import { CardSymbol } from "src/types"
 import { Card } from "../../components/card"
 import { PlayerBlock } from "./player-block"
+import { CardSymbol } from "alacrity-shared"
 
 export const GameRoom: React.FC = () => {
-  const players = useAppSelector((state) => state.players)
+  const players = useAppSelector((state) => state.room.players)
   const playerId = useAppSelector((state) => state.playerId)
 
   const opponentPlayers = players.filter((player) => player.id !== playerId)
