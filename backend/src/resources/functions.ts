@@ -1,4 +1,4 @@
-import { Serverless } from "@utils";
+import { Serverless } from "@utils"
 
 export const functions: Serverless["functions"] = {
   onConnect: {
@@ -11,17 +11,18 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
-  // onRoomCreated: {
-  //   events: [
-  //     {
-  //       websocket: {
-  //         route: FrontendWebsocketActions.RoomCreated,
-  //       },
-  //     },
-  //   ],
-  // },
+  onRoomCreated: {
+    handler: `src/functions/onRoomCreated.handler`,
+    events: [
+      {
+        websocket: {
+          route: "room_created",
+        },
+      },
+    ],
+  },
   onPlayerJoined: {
-    handler:  `src/functions/onPlayerJoined.handler`,
+    handler: `src/functions/onPlayerJoined.handler`,
     events: [
       {
         websocket: {
@@ -80,4 +81,4 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
-};
+}
