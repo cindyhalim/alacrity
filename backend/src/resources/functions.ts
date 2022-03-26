@@ -1,5 +1,5 @@
-// import { FrontendWebsocketActions } from "alacrity-shared";
-import { Serverless } from "@utils";
+import { FrontendWebsocketActions } from "alacrity-shared"
+import { Serverless } from "@utils"
 
 export const functions: Serverless["functions"] = {
   onConnect: {
@@ -12,15 +12,15 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
-  // onRoomCreated: {
-  //   events: [
-  //     {
-  //       websocket: {
-  //         route: FrontendWebsocketActions.RoomCreated,
-  //       },
-  //     },
-  //   ],
-  // },
+  onRoomCreated: {
+    events: [
+      {
+        websocket: {
+          route: FrontendWebsocketActions.RoomCreated,
+        },
+      },
+    ],
+  },
   // onPlayerJoined: {
   //   events: [
   //     {
@@ -80,4 +80,4 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
-};
+}

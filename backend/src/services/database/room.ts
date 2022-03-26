@@ -1,36 +1,36 @@
-import { config } from "@utils";
-import { dynamoDb } from "./dynamoDb";
-import { IGame, IPlayer, IRoomIndex, TRoomItems } from "./types";
+import { config } from "@utils"
+import { dynamoDb } from "./dynamoDb"
+import { IGame, IPlayer, IRoomIndex, TRoomItems } from "./types"
 
 const getPlayerIndexes = ({
   playerId,
   roomId,
 }: {
-  playerId: string;
-  roomId: string;
+  playerId: string
+  roomId: string
 }): IRoomIndex => ({
   pk: `room_${roomId}`,
   sk: `player_${playerId}`,
-});
+})
 
 const getGameIndexes = ({
   gameId,
   roomId,
 }: {
-  gameId: string;
-  roomId: string;
+  gameId: string
+  roomId: string
 }): IRoomIndex => ({
   pk: `room_${roomId}`,
   sk: `game_${gameId}`,
-});
+})
 
 const getRoomItems = async ({
   roomId,
 }: {
-  roomId: string;
+  roomId: string
 }): Promise<TRoomItems | null> => {
   try {
-    const pk: IRoomIndex["pk"] = `room_${roomId}`;
+    const pk: IRoomIndex["pk"] = `room_${roomId}`
     const response = await dynamoDb
       .query({
         TableName: config.dynamoDbTableName,
@@ -40,27 +40,27 @@ const getRoomItems = async ({
           ":pk": pk,
         },
       })
-      .promise();
+      .promise()
 
-    if (response.Items) return response.Items as TRoomItems;
+    if (response.Items) return response.Items as TRoomItems
 
-    return null;
+    return null
   } catch (e) {
-    console.log(`Error getting room ${roomId}`, e.message);
-    throw e;
+    console.log(`Error getting room ${roomId}`, e.message)
+    throw e
   }
-};
+}
 
 const deleteGame = async ({
   roomId,
   gameId,
 }: {
-  roomId: string;
-  gameId: string;
+  roomId: string
+  gameId: string
 }) => {
   try {
-    const pk: IRoomIndex["pk"] = `room_${roomId}`;
-    const sk: IRoomIndex["sk"] = `game_${gameId}`;
+    const pk: IRoomIndex["pk"] = `room_${roomId}`
+    const sk: IRoomIndex["sk"] = `game_${gameId}`
 
     await dynamoDb
       .delete({
@@ -70,22 +70,22 @@ const deleteGame = async ({
           sk,
         },
       })
-      .promise();
+      .promise()
   } catch (e) {
-    console.log(`Error deleting room ${roomId}`, e.message);
-    throw e;
+    console.log(`Error deleting room ${roomId}`, e.message)
+    throw e
   }
-};
+}
 
 const updateGame = async ({
   roomId,
   game,
 }: {
-  roomId: string;
-  game: IGame;
+  roomId: string
+  game: IGame
 }) => {
   try {
-    const { pk, sk } = getGameIndexes({ gameId: game.id, roomId });
+    const { pk, sk } = getGameIndexes({ gameId: game.id, roomId })
     await dynamoDb
       .update({
         TableName: config.dynamoDbTableName,
@@ -98,16 +98,16 @@ const updateGame = async ({
           game,
         },
       })
-      .promise();
+      .promise()
   } catch (e) {
-    console.log(`Error updating game ${game.id} for`, e.message);
-    throw e;
+    console.log(`Error updating game ${game.id} for`, e.message)
+    throw e
   }
-};
+}
 
 const addGame = async ({ roomId, game }: { roomId: string; game: IGame }) => {
   try {
-    const { pk, sk } = getGameIndexes({ gameId: game.id, roomId });
+    const { pk, sk } = getGameIndexes({ gameId: game.id, roomId })
     await dynamoDb
       .put({
         TableName: config.dynamoDbTableName,
@@ -117,22 +117,22 @@ const addGame = async ({ roomId, game }: { roomId: string; game: IGame }) => {
           game,
         },
       })
-      .promise();
+      .promise()
   } catch (e) {
-    console.log(`Error creating game ${game.id} for`, e.message);
-    throw e;
+    console.log(`Error creating game ${game.id} for`, e.message)
+    throw e
   }
-};
+}
 
 const addPlayer = async ({
   roomId,
   player,
 }: {
-  roomId: string;
-  player: IPlayer;
+  roomId: string
+  player: IPlayer
 }) => {
   try {
-    const { pk, sk } = getPlayerIndexes({ roomId, playerId: player.id });
+    const { pk, sk } = getPlayerIndexes({ roomId, playerId: player.id })
     await dynamoDb
       .put({
         TableName: config.dynamoDbTableName,
@@ -142,22 +142,22 @@ const addPlayer = async ({
           player,
         },
       })
-      .promise();
+      .promise()
   } catch (e) {
-    console.log(`Error adding player ${player.id}`, e.message);
-    throw e;
+    console.log(`Error adding player ${player.id}`, e.message)
+    throw e
   }
-};
+}
 
 const deletePlayer = async ({
   roomId,
   playerId,
 }: {
-  roomId: string;
-  playerId: string;
+  roomId: string
+  playerId: string
 }) => {
   try {
-    const { pk, sk } = getPlayerIndexes({ roomId, playerId });
+    const { pk, sk } = getPlayerIndexes({ roomId, playerId })
     await dynamoDb
       .delete({
         TableName: config.dynamoDbTableName,
@@ -166,12 +166,12 @@ const deletePlayer = async ({
           sk,
         },
       })
-      .promise();
+      .promise()
   } catch (e) {
-    console.log(`Error updating players to db`, e.message);
-    throw e;
+    console.log(`Error updating players to db`, e.message)
+    throw e
   }
-};
+}
 
 export const room = {
   get: getRoomItems,
@@ -180,4 +180,4 @@ export const room = {
   addGame,
   updateGame,
   deleteGame,
-};
+}
