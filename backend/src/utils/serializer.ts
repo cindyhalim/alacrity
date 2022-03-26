@@ -31,6 +31,7 @@ export const getSerializedRoom = async ({
           totalDrawCardsRemaining: game.drawPile.length,
           wildCard: game.wildCardPile[game.wildCardPile.length - 1],
           currentPlayerId: game.currentPlayerId,
+          status: game.status
         }
       : null,
   };
