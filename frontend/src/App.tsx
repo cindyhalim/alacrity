@@ -1,6 +1,9 @@
 import React from "react"
-import { GameRoom } from "./features/game/game-room"
+import { WaitingRoom } from "./features"
+import { useAppSelector } from "./redux/utils"
+import { Box } from "rebass"
 
 export const App: React.FC = () => {
-  return <GameRoom />
+  const gameStatus = useAppSelector((state) => state.room?.game?.status)
+  return gameStatus !== "started" ? <WaitingRoom /> : <Box>game screen</Box>
 }
