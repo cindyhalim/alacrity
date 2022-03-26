@@ -21,20 +21,24 @@ export interface IWildCard {
   symbols: CardSymbol[];
 }
 
+export interface IPlayer {
+  id: string;
+  name: string;
+  points?: number;
+  playPile?: IPlayingCard[];
+}
+
+export interface IGame {
+  id: string;
+  totalDrawCardsRemaining: number;
+  wildCard: IWildCard;
+  currentPlayerId: string;
+  status: "started" | "ended"
+}
 export interface IRoom {
   id: string;
-  players: {
-    id: string;
-    name: string;
-    points?: number;
-    playPile?: IPlayingCard[];
-  }[];
-  game: {
-    id: string;
-    totalDrawCardsRemaining: number;
-    wildCard: IWildCard;
-    currentPlayerId: string;
-  } | null;
+  players: IPlayer[];
+  game: IGame | null;
 }
 
 // Websockets
@@ -90,10 +94,18 @@ export interface IPlayerJoinedEvent {
   username: string;
 }
 
+export enum GameDifficulty {
+  EASY = "EASY",
+  MEDIUM = "MEDIUM",
+  HARD = "HARD",
+  VERY_HARD = "VERY_HARD",
+}
+
+
 export interface IGameStartedEvent {
   action: FrontendWebsocketActions.GameStarted;
   roomId: string;
-  difficulty: string;
+  difficulty: GameDifficulty;
 }
 
 export interface ICardDrawnEvent {

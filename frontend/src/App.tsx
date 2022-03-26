@@ -4,6 +4,6 @@ import { useAppSelector } from "./redux/utils"
 import { Box } from "rebass"
 
 export const App: React.FC = () => {
-  const gameStatus = useAppSelector((state) => state.game?.status)
+  const gameStatus = useAppSelector((state) => state.room?.game?.status)
   return gameStatus !== "started" ? <WaitingRoom /> : <Box>game screen</Box>
 }
