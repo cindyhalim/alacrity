@@ -3,8 +3,8 @@ import { Flex, Image, Text } from "rebass"
 import { Button } from "src/components"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
-import { GameDifficulty } from "src/types"
 import backgroundImgSrc from "src/assets/background.png"
+import { GameDifficulty } from "alacrity-shared"
 
 export const WaitingRoom: React.FC = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty>(
