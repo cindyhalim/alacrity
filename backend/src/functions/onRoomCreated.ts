@@ -1,22 +1,16 @@
-import { APIGatewayEvent } from "aws-lambda"
-import {
-  BackendWebsocketActions,
-  IRoomCreatedEvent,
-  IRoomUpdatedEvent,
-} from "alacrity-shared"
+import { BackendWebsocketActions, IRoomCreatedEvent, IRoomUpdatedEvent } from "alacrity-shared"
 
-import { getSerializedRoom, middyfy } from "@utils"
+import { getSerializedRoom, middyfy, ValidatedAPIGatewayEvent } from "@utils"
 import { database, ws } from "@services"
 
-const onRoomCreated = async (event: APIGatewayEvent) => {
+const onRoomCreated = async (event: ValidatedAPIGatewayEvent<IRoomCreatedEvent>) => {
   const {
     requestContext: { routeKey, connectionId },
+    body: { roomId, username },
   } = event
 
   console.log("onDisconnect: recieved route key:", routeKey)
   console.log("connectionId:", connectionId)
-
-  const { roomId, username }: IRoomCreatedEvent = JSON.parse(event.body)
 
   await database.room.addPlayer({
     roomId,
