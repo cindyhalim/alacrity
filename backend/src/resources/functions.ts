@@ -21,15 +21,16 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
-  // onPlayerJoined: {
-  //   events: [
-  //     {
-  //       websocket: {
-  //         route: FrontendWebsocketActions.PlayerJoined,
-  //       },
-  //     },
-  //   ],
-  // },
+  onPlayerJoined: {
+    handler: `src/functions/onPlayerJoined.handler`,
+    events: [
+      {
+        websocket: {
+          route: "player_joined",
+        },
+      },
+    ],
+  },
   // onGameStarted: {
   //   iamRoleStatementsInherit: true,
   //   iamRoleStatements: [

@@ -7,6 +7,7 @@ export const getSerializedRoom = async ({
 }: {
   roomId: string;
 }): Promise<IRoom> => {
+  try {
   const room = await database.room.get({ roomId });
   const game = getGame(room);
   const players: IRoom["players"] = getPlayers(room).map(({ player }) => {
@@ -35,4 +36,7 @@ export const getSerializedRoom = async ({
         }
       : null,
   };
+} catch(e) {
+  return null
+}
 };

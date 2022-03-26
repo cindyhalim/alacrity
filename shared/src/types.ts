@@ -47,6 +47,8 @@ export enum BackendWebsocketActions {
   PlayerIdSet = "player_id_set",
   RoomUpdated = "room_updated",
   GameUpdated = "game_updated",
+  RoomNotFound = "room_not_found",
+  AddPlayerFailed = 'add_player_failed'
 }
 
 export enum FrontendWebsocketActions {
@@ -64,6 +66,13 @@ export interface IPlayerIdSetEvent {
   playerId: string;
 }
 
+export interface IRoomNotFoundEvent {
+  action: BackendWebsocketActions.RoomNotFound;
+}
+
+export interface IAddPlayerFailed {
+  action: BackendWebsocketActions.AddPlayerFailed;
+}
 export interface IRoomUpdatedEvent {
   action: BackendWebsocketActions.RoomUpdated;
   room: IRoom;
