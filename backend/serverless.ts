@@ -1,8 +1,7 @@
-import type { AWS } from "@serverless/typescript";
+import { alacrityTable, cardsBucket, functions } from "@resources";
+import { Serverless } from "@utils";
 
-import hello from "@functions/hello";
-
-const serverlessConfiguration: AWS = {
+const serverlessConfiguration: Serverless = {
   service: "alacrity",
   frameworkVersion: "2",
   custom: {
@@ -23,11 +22,43 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
+      CARDS_BUCKET_NAME: "${self:service.name}-cards-${self:provider.stage}",
+      CARDS_DATA_KEY: "",
+      TABLE_NAME: "${self:service.name}-${self:provider.stage}",
+      WS_ENDPOINT: {
+        "Fn::Join": [
+          "",
+          [
+            { Ref: "WebsocketsApi" },
+            ".execute-api.",
+            { Ref: "AWS::Region" },
+            ".amazonaws.com/",
+            "dev",
+          ],
+        ],
+      },
     },
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: [
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:PutItem",
+        ],
+        Resource: [{ "Fn::GetAtt": ["AlacrityTable", "Arn"] }],
+      },
+    ],
     lambdaHashingVersion: "20201221",
   },
-  // import the function via paths
-  functions: { hello },
+  functions,
+  resources: {
+    Resources: {
+      ...alacrityTable,
+      ...cardsBucket,
+    },
+  },
 };
 
 module.exports = serverlessConfiguration;
