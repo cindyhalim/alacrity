@@ -71,7 +71,7 @@ export const WaitingRoom: React.FC = () => {
               sx={{ marginLeft: idx === 0 ? 0 : 20 }}
               onClick={() => setSelectedDifficulty(difficulty)}
             >
-              {difficulty.replace("_", "")}
+              {difficulty.replace("_", " ")}
             </Button>
           ))}
         </Flex>
