@@ -33,6 +33,7 @@ export interface IGame {
   totalDrawCardsRemaining: number;
   wildCard: IWildCard;
   currentPlayerId: string;
+  status: "started" | "ended"
 }
 export interface IRoom {
   id: string;
@@ -84,10 +85,18 @@ export interface IPlayerJoinedEvent {
   username: string;
 }
 
+export enum GameDifficulty {
+  EASY = "EASY",
+  MEDIUM = "MEDIUM",
+  HARD = "HARD",
+  VERY_HARD = "VERY_HARD",
+}
+
+
 export interface IGameStartedEvent {
   action: FrontendWebsocketActions.GameStarted;
   roomId: string;
-  difficulty: string;
+  difficulty: GameDifficulty;
 }
 
 export interface ICardDrawnEvent {
