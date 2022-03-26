@@ -1,4 +1,3 @@
-import { FrontendWebsocketActions } from "alacrity-shared"
 import { Serverless } from "@utils"
 
 export const functions: Serverless["functions"] = {
@@ -13,10 +12,11 @@ export const functions: Serverless["functions"] = {
     ],
   },
   onRoomCreated: {
+    handler: `src/functions/onRoomCreated.handler`,
     events: [
       {
         websocket: {
-          route: FrontendWebsocketActions.RoomCreated,
+          route: "room_created",
         },
       },
     ],
