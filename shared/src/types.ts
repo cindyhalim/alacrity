@@ -48,7 +48,7 @@ export enum BackendWebsocketActions {
   RoomUpdated = "room_updated",
   GameUpdated = "game_updated",
   RoomNotFound = "room_not_found",
-  AddPlayerFailed = 'add_player_failed'
+  AddPlayerFailed = "add_player_failed",
 }
 
 export enum FrontendWebsocketActions {
@@ -67,11 +67,11 @@ export interface IPlayerIdSetEvent {
 }
 
 export interface IRoomNotFoundEvent {
-  action: BackendWebsocketActions.RoomNotFound;
+  action: BackendWebsocketActions.RoomNotFound
 }
 
 export interface IAddPlayerFailed {
-  action: BackendWebsocketActions.AddPlayerFailed;
+  action: BackendWebsocketActions.AddPlayerFailed
 }
 export interface IRoomUpdatedEvent {
   action: BackendWebsocketActions.RoomUpdated
@@ -127,7 +127,3 @@ export type TFrontendWebsocketEvent =
   | ICardDrawnEvent
   | ICardWonEvent
   | IGameEndedEvent
-
-module.exports = {
-  CardSymbol,
-}
