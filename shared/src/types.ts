@@ -24,12 +24,16 @@ export interface IWildCard {
 export interface IPlayer {
   id: string
   name: string
+}
+
+export interface IGamePlayer extends IPlayer {
   points?: number
   playPile?: IPlayingCard[]
 }
 
 export interface IGame {
   id: string
+  players: IGamePlayer[]
   totalDrawCardsRemaining: number
   wildCard: IWildCard
   currentPlayerId: string
@@ -40,14 +44,15 @@ export interface IGame {
 
 export enum BackendWebsocketActions {
   PlayerIdSet = "player_id_set",
-  PlayersUpdated = "players_updated",
+  PlayerPoolUpdated = "player_pool_updated",
   GameUpdated = "game_updated",
   RoomNotFound = "room_not_found",
+  AdminDisconnected = "admin_disconnected",
   AddPlayerFailed = "add_player_failed",
 }
 
 export enum FrontendWebsocketActions {
-  RoomCreated = "room_created",
+  AdminJoined = "admin_joined",
   PlayerJoined = "player_joined",
   GameStarted = "game_started",
   CardDrawn = "card_drawn",
@@ -65,25 +70,30 @@ export interface IRoomNotFoundEvent {
   action: BackendWebsocketActions.RoomNotFound
 }
 
-export interface IAddPlayerFailed {
-  action: BackendWebsocketActions.AddPlayerFailed
+export interface IAdminDisconnectedEvent {
+  action: BackendWebsocketActions.AdminDisconnected
 }
-export interface IPlayersUpdated {
-  action: BackendWebsocketActions.PlayersUpdated
+
+export interface IPlayerPoolUpdatedEvent {
+  action: BackendWebsocketActions.PlayerPoolUpdated
   players: IPlayer[]
 }
 
-export interface IGameUpdated {
+export interface IGameUpdatedEvent {
   action: BackendWebsocketActions.GameUpdated
   currentGame: IGame | null
 }
 
-export type TBackendWebsocketEvent = IPlayerIdSetEvent | IPlayersUpdated | IGameUpdated
+export type TBackendWebsocketEvent =
+  | IPlayerIdSetEvent
+  | IPlayerPoolUpdatedEvent
+  | IGameUpdatedEvent
+  | IAdminDisconnectedEvent
 
 // Frontend events
 
-export interface IRoomCreatedEvent {
-  action: FrontendWebsocketActions.RoomCreated
+export interface IAdminJoinedEvent {
+  action: FrontendWebsocketActions.AdminJoined
   roomId: string
   username: string
 }
@@ -121,7 +131,7 @@ export interface IGameEndedEvent {
 }
 
 export type TFrontendWebsocketEvent =
-  | IRoomCreatedEvent
+  | IAdminJoinedEvent
   | IPlayerJoinedEvent
   | IGameStartedEvent
   | ICardDrawnEvent
