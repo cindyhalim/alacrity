@@ -87,6 +87,8 @@ const onDisconnect = async (event: APIGatewayEvent) => {
       }),
     ),
   )
+
+  return { statusCode: 200 }
 }
 
 export const handler = middyfy(onDisconnect)
