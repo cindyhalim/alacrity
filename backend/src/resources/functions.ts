@@ -11,12 +11,12 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
-  onRoomCreated: {
-    handler: `src/functions/onRoomCreated.handler`,
+  onAdminJoined: {
+    handler: `src/functions/onAdminJoined.handler`,
     events: [
       {
         websocket: {
-          route: "room_created",
+          route: "admin_joined",
         },
       },
     ],

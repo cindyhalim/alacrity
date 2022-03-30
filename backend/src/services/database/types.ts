@@ -1,4 +1,5 @@
 import { IPlayingCard, IWildCard } from "alacrity-shared"
+
 type id = string
 type TDynamoDbRoomSk = "game" | "player"
 
@@ -17,14 +18,14 @@ export interface IConnectionItem extends IConnectionIndex {
 }
 
 export interface IGameItem extends IRoomIndex {
-  game: IGame
+  game: IGameModel
 }
 
 export interface IPlayerItem extends IRoomIndex {
-  player: IPlayer
+  player: IPlayerModel
 }
 
-export interface IGame {
+export interface IGameModel {
   id: string
   players: IGamePlayer[]
   drawPile: IPlayingCard[]
@@ -33,11 +34,12 @@ export interface IGame {
   currentPlayerId: string
 }
 
-export interface IPlayer {
+export interface IPlayerModel {
   id: string
   name: string
+  isAdmin: boolean
 }
-export interface IGamePlayer extends IPlayer {
+export interface IGamePlayer extends IPlayerModel {
   winningPile: IPlayingCard[]
   playPile: IPlayingCard[]
 }

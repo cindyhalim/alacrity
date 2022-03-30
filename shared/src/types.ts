@@ -11,48 +11,48 @@ export enum CardSymbol {
 }
 
 export interface IPlayingCard {
-  type: "playing";
-  symbol: CardSymbol;
-  text: string;
+  type: "playing"
+  symbol: CardSymbol
+  text: string
 }
 
 export interface IWildCard {
-  type: "wildCard";
-  symbols: CardSymbol[];
+  type: "wildCard"
+  symbols: CardSymbol[]
 }
 
 export interface IPlayer {
-  id: string;
-  name: string;
-  points?: number;
-  playPile?: IPlayingCard[];
+  id: string
+  name: string
+}
+
+export interface IGamePlayer extends IPlayer {
+  points?: number
+  playPile?: IPlayingCard[]
 }
 
 export interface IGame {
-  id: string;
-  totalDrawCardsRemaining: number;
-  wildCard: IWildCard;
-  currentPlayerId: string;
+  id: string
+  players: IGamePlayer[]
+  totalDrawCardsRemaining: number
+  wildCard: IWildCard
+  currentPlayerId: string
   status: "started" | "ended"
-}
-export interface IRoom {
-  id: string;
-  players: IPlayer[];
-  game: IGame | null;
 }
 
 // Websockets
 
 export enum BackendWebsocketActions {
   PlayerIdSet = "player_id_set",
-  RoomUpdated = "room_updated",
+  PlayerPoolUpdated = "player_pool_updated",
   GameUpdated = "game_updated",
   RoomNotFound = "room_not_found",
-  AddPlayerFailed = 'add_player_failed'
+  AdminDisconnected = "admin_disconnected",
+  AddPlayerFailed = "add_player_failed",
 }
 
 export enum FrontendWebsocketActions {
-  RoomCreated = "room_created",
+  AdminJoined = "admin_joined",
   PlayerJoined = "player_joined",
   GameStarted = "game_started",
   CardDrawn = "card_drawn",
@@ -62,36 +62,46 @@ export enum FrontendWebsocketActions {
 
 // Backend events
 export interface IPlayerIdSetEvent {
-  action: BackendWebsocketActions.PlayerIdSet;
-  playerId: string;
+  action: BackendWebsocketActions.PlayerIdSet
+  playerId: string
 }
 
 export interface IRoomNotFoundEvent {
-  action: BackendWebsocketActions.RoomNotFound;
+  action: BackendWebsocketActions.RoomNotFound
 }
 
-export interface IAddPlayerFailed {
-  action: BackendWebsocketActions.AddPlayerFailed;
-}
-export interface IRoomUpdatedEvent {
-  action: BackendWebsocketActions.RoomUpdated;
-  room: IRoom;
+export interface IAdminDisconnectedEvent {
+  action: BackendWebsocketActions.AdminDisconnected
 }
 
-export type TBackendWebsocketEvent = IPlayerIdSetEvent | IRoomUpdatedEvent;
+export interface IPlayerPoolUpdatedEvent {
+  action: BackendWebsocketActions.PlayerPoolUpdated
+  players: IPlayer[]
+}
+
+export interface IGameUpdatedEvent {
+  action: BackendWebsocketActions.GameUpdated
+  currentGame: IGame | null
+}
+
+export type TBackendWebsocketEvent =
+  | IPlayerIdSetEvent
+  | IPlayerPoolUpdatedEvent
+  | IGameUpdatedEvent
+  | IAdminDisconnectedEvent
 
 // Frontend events
 
-export interface IRoomCreatedEvent {
-  action: FrontendWebsocketActions.RoomCreated;
-  roomId: string;
-  username: string;
+export interface IAdminJoinedEvent {
+  action: FrontendWebsocketActions.AdminJoined
+  roomId: string
+  username: string
 }
 
 export interface IPlayerJoinedEvent {
-  action: FrontendWebsocketActions.PlayerJoined;
-  roomId: string;
-  username: string;
+  action: FrontendWebsocketActions.PlayerJoined
+  roomId: string
+  username: string
 }
 
 export enum GameDifficulty {
@@ -101,30 +111,29 @@ export enum GameDifficulty {
   VERY_HARD = "VERY_HARD",
 }
 
-
 export interface IGameStartedEvent {
-  action: FrontendWebsocketActions.GameStarted;
-  roomId: string;
-  difficulty: GameDifficulty;
+  action: FrontendWebsocketActions.GameStarted
+  roomId: string
+  difficulty: GameDifficulty
 }
 
 export interface ICardDrawnEvent {
-  action: FrontendWebsocketActions.CardDrawn;
+  action: FrontendWebsocketActions.CardDrawn
 }
 
 export interface ICardWonEvent {
-  action: FrontendWebsocketActions.CardWon;
-  loserPlayerId: string;
+  action: FrontendWebsocketActions.CardWon
+  loserPlayerId: string
 }
 
 export interface IGameEndedEvent {
-  action: FrontendWebsocketActions.GameEnded;
+  action: FrontendWebsocketActions.GameEnded
 }
 
 export type TFrontendWebsocketEvent =
-  | IRoomCreatedEvent
+  | IAdminJoinedEvent
   | IPlayerJoinedEvent
   | IGameStartedEvent
   | ICardDrawnEvent
   | ICardWonEvent
-  | IGameEndedEvent;
+  | IGameEndedEvent

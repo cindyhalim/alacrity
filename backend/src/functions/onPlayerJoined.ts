@@ -1,60 +1,72 @@
-import { database, ws } from "@services";
-import { getSerializedRoom, middyfy, ValidatedAPIGatewayEvent } from "@utils";
+import { database, ws } from "@services"
+import { getPlayers, getSerializedPlayerPool, middyfy, ValidatedAPIGatewayEvent } from "@utils"
 
 import {
   BackendWebsocketActions,
-  IAddPlayerFailed,
   IPlayerJoinedEvent,
   IRoomNotFoundEvent,
-  IRoomUpdatedEvent,
-} from "alacrity-shared";
+  IPlayerIdSetEvent,
+  IPlayerPoolUpdatedEvent,
+} from "alacrity-shared"
 
-const onPlayerJoined = async (
-  event: ValidatedAPIGatewayEvent<IPlayerJoinedEvent>
-) => {
+const onPlayerJoined = async (event: ValidatedAPIGatewayEvent<IPlayerJoinedEvent>) => {
   const {
-    requestContext: { connectionId },
-  } = event;
+    requestContext: { routeKey, connectionId },
+    body: { roomId, username },
+  } = event
 
-  const { roomId, username } = event.body;
+  console.log("onAdminJoined: recieved route key:", routeKey)
 
-  try {
-    await database.room.addPlayer({
-      roomId,
-      player: { id: connectionId, name: username },
-    });
+  const room = await database.room.get({ roomId })
+  const currentPlayers = getPlayers(room)
 
-    const room = await getSerializedRoom({ roomId });
-
-    if (!room) {
-      await ws.sendMessage<IRoomNotFoundEvent>({
-        connectionId,
-        body: {
-          action: BackendWebsocketActions.RoomNotFound,
-        },
-      });
-
-      return {statusCode: 404}
-    }
-
-    await ws.sendMessage<IRoomUpdatedEvent>({
+  if (!currentPlayers.some((player) => player.isAdmin)) {
+    await ws.sendMessage<IRoomNotFoundEvent>({
       connectionId,
       body: {
-        action: BackendWebsocketActions.RoomUpdated,
-        room,
+        action: BackendWebsocketActions.RoomNotFound,
       },
-    });
-
-    return { statusCode: 200 }
-
-  } catch (e) {
-    await ws.sendMessage<IAddPlayerFailed>({
-      connectionId,
-      body: {
-        action: BackendWebsocketActions.AddPlayerFailed,
-      },
-    });
+    })
+    console.log("Admin not found")
+    return
   }
-};
 
-export const handler = middyfy(onPlayerJoined);
+  console.log("Adding connection:", connectionId)
+  await database.connection.update({ connectionId, roomId })
+
+  console.log("Adding player:", connectionId)
+  await database.room.addPlayer({
+    roomId,
+    player: { id: connectionId, name: username, isAdmin: false },
+  })
+
+  const playerPool = await getSerializedPlayerPool({ roomId })
+
+  console.log("Player pool:", playerPool)
+
+  console.log("Sending event:", BackendWebsocketActions.PlayerIdSet)
+  await ws.sendMessage<IPlayerIdSetEvent>({
+    connectionId,
+    body: {
+      action: BackendWebsocketActions.PlayerIdSet,
+      playerId: connectionId,
+    },
+  })
+
+  const playerPoolUpdatedEvents = playerPool.map((player) =>
+    ws.sendMessage<IPlayerPoolUpdatedEvent>({
+      connectionId: player.id,
+      body: {
+        action: BackendWebsocketActions.PlayerPoolUpdated,
+        players: playerPool,
+      },
+    }),
+  )
+
+  console.log("Sending event:", BackendWebsocketActions.PlayerPoolUpdated)
+  await Promise.all(playerPoolUpdatedEvents)
+
+  return { statusCode: 200 }
+}
+
+export const handler = middyfy(onPlayerJoined)

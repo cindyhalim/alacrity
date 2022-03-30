@@ -1,6 +1,6 @@
 import { config } from "@utils"
 import { dynamoDb } from "./dynamoDb"
-import { IGame, IPlayer, IRoomIndex, TRoomItems } from "./types"
+import { IGameModel, IPlayerModel, IRoomIndex, TRoomItems } from "./types"
 
 const getPlayerIndexes = ({
   playerId,
@@ -13,22 +13,12 @@ const getPlayerIndexes = ({
   sk: `player_${playerId}`,
 })
 
-const getGameIndexes = ({
-  gameId,
-  roomId,
-}: {
-  gameId: string
-  roomId: string
-}): IRoomIndex => ({
+const getGameIndexes = ({ gameId, roomId }: { gameId: string; roomId: string }): IRoomIndex => ({
   pk: `room_${roomId}`,
   sk: `game_${gameId}`,
 })
 
-const getRoomItems = async ({
-  roomId,
-}: {
-  roomId: string
-}): Promise<TRoomItems | null> => {
+const getRoomItems = async ({ roomId }: { roomId: string }): Promise<TRoomItems | null> => {
   try {
     const pk: IRoomIndex["pk"] = `room_${roomId}`
     const response = await dynamoDb
@@ -51,13 +41,7 @@ const getRoomItems = async ({
   }
 }
 
-const deleteGame = async ({
-  roomId,
-  gameId,
-}: {
-  roomId: string
-  gameId: string
-}) => {
+const deleteGame = async ({ roomId, gameId }: { roomId: string; gameId: string }) => {
   try {
     const pk: IRoomIndex["pk"] = `room_${roomId}`
     const sk: IRoomIndex["sk"] = `game_${gameId}`
@@ -77,13 +61,7 @@ const deleteGame = async ({
   }
 }
 
-const updateGame = async ({
-  roomId,
-  game,
-}: {
-  roomId: string
-  game: IGame
-}) => {
+const updateGame = async ({ roomId, game }: { roomId: string; game: IGameModel }) => {
   try {
     const { pk, sk } = getGameIndexes({ gameId: game.id, roomId })
     await dynamoDb
@@ -105,7 +83,7 @@ const updateGame = async ({
   }
 }
 
-const addGame = async ({ roomId, game }: { roomId: string; game: IGame }) => {
+const addGame = async ({ roomId, game }: { roomId: string; game: IGameModel }) => {
   try {
     const { pk, sk } = getGameIndexes({ gameId: game.id, roomId })
     await dynamoDb
@@ -124,13 +102,7 @@ const addGame = async ({ roomId, game }: { roomId: string; game: IGame }) => {
   }
 }
 
-const addPlayer = async ({
-  roomId,
-  player,
-}: {
-  roomId: string
-  player: IPlayer
-}) => {
+const addPlayer = async ({ roomId, player }: { roomId: string; player: IPlayerModel }) => {
   try {
     const { pk, sk } = getPlayerIndexes({ roomId, playerId: player.id })
     await dynamoDb
@@ -149,13 +121,7 @@ const addPlayer = async ({
   }
 }
 
-const deletePlayer = async ({
-  roomId,
-  playerId,
-}: {
-  roomId: string
-  playerId: string
-}) => {
+const deletePlayer = async ({ roomId, playerId }: { roomId: string; playerId: string }) => {
   try {
     const { pk, sk } = getPlayerIndexes({ roomId, playerId })
     await dynamoDb
