@@ -11,44 +11,39 @@ export enum CardSymbol {
 }
 
 export interface IPlayingCard {
-  type: "playing";
-  symbol: CardSymbol;
-  text: string;
+  type: "playing"
+  symbol: CardSymbol
+  text: string
 }
 
 export interface IWildCard {
-  type: "wildCard";
-  symbols: CardSymbol[];
+  type: "wildCard"
+  symbols: CardSymbol[]
 }
 
 export interface IPlayer {
-  id: string;
-  name: string;
-  points?: number;
-  playPile?: IPlayingCard[];
+  id: string
+  name: string
+  points?: number
+  playPile?: IPlayingCard[]
 }
 
 export interface IGame {
-  id: string;
-  totalDrawCardsRemaining: number;
-  wildCard: IWildCard;
-  currentPlayerId: string;
+  id: string
+  totalDrawCardsRemaining: number
+  wildCard: IWildCard
+  currentPlayerId: string
   status: "started" | "ended"
-}
-export interface IRoom {
-  id: string;
-  players: IPlayer[];
-  game: IGame | null;
 }
 
 // Websockets
 
 export enum BackendWebsocketActions {
   PlayerIdSet = "player_id_set",
-  RoomUpdated = "room_updated",
+  PlayersUpdated = "players_updated",
   GameUpdated = "game_updated",
   RoomNotFound = "room_not_found",
-  AddPlayerFailed = 'add_player_failed'
+  AddPlayerFailed = "add_player_failed",
 }
 
 export enum FrontendWebsocketActions {
@@ -62,36 +57,41 @@ export enum FrontendWebsocketActions {
 
 // Backend events
 export interface IPlayerIdSetEvent {
-  action: BackendWebsocketActions.PlayerIdSet;
-  playerId: string;
+  action: BackendWebsocketActions.PlayerIdSet
+  playerId: string
 }
 
 export interface IRoomNotFoundEvent {
-  action: BackendWebsocketActions.RoomNotFound;
+  action: BackendWebsocketActions.RoomNotFound
 }
 
 export interface IAddPlayerFailed {
-  action: BackendWebsocketActions.AddPlayerFailed;
+  action: BackendWebsocketActions.AddPlayerFailed
 }
-export interface IRoomUpdatedEvent {
-  action: BackendWebsocketActions.RoomUpdated;
-  room: IRoom;
+export interface IPlayersUpdated {
+  action: BackendWebsocketActions.PlayersUpdated
+  players: IPlayer[]
 }
 
-export type TBackendWebsocketEvent = IPlayerIdSetEvent | IRoomUpdatedEvent;
+export interface IGameUpdated {
+  action: BackendWebsocketActions.GameUpdated
+  currentGame: IGame | null
+}
+
+export type TBackendWebsocketEvent = IPlayerIdSetEvent | IPlayersUpdated | IGameUpdated
 
 // Frontend events
 
 export interface IRoomCreatedEvent {
-  action: FrontendWebsocketActions.RoomCreated;
-  roomId: string;
-  username: string;
+  action: FrontendWebsocketActions.RoomCreated
+  roomId: string
+  username: string
 }
 
 export interface IPlayerJoinedEvent {
-  action: FrontendWebsocketActions.PlayerJoined;
-  roomId: string;
-  username: string;
+  action: FrontendWebsocketActions.PlayerJoined
+  roomId: string
+  username: string
 }
 
 export enum GameDifficulty {
@@ -101,24 +101,23 @@ export enum GameDifficulty {
   VERY_HARD = "VERY_HARD",
 }
 
-
 export interface IGameStartedEvent {
-  action: FrontendWebsocketActions.GameStarted;
-  roomId: string;
-  difficulty: GameDifficulty;
+  action: FrontendWebsocketActions.GameStarted
+  roomId: string
+  difficulty: GameDifficulty
 }
 
 export interface ICardDrawnEvent {
-  action: FrontendWebsocketActions.CardDrawn;
+  action: FrontendWebsocketActions.CardDrawn
 }
 
 export interface ICardWonEvent {
-  action: FrontendWebsocketActions.CardWon;
-  loserPlayerId: string;
+  action: FrontendWebsocketActions.CardWon
+  loserPlayerId: string
 }
 
 export interface IGameEndedEvent {
-  action: FrontendWebsocketActions.GameEnded;
+  action: FrontendWebsocketActions.GameEnded
 }
 
 export type TFrontendWebsocketEvent =
@@ -127,4 +126,4 @@ export type TFrontendWebsocketEvent =
   | IGameStartedEvent
   | ICardDrawnEvent
   | ICardWonEvent
-  | IGameEndedEvent;
+  | IGameEndedEvent
