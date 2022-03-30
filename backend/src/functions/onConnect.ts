@@ -1,16 +1,16 @@
-import { APIGatewayEvent } from "aws-lambda";
+import { APIGatewayEvent } from "aws-lambda"
 
-import { ws } from "@services";
-import { middyfy } from "@utils";
+import { ws } from "@services"
+import { middyfy } from "@utils"
 
-import { IPlayerIdSetEvent, BackendWebsocketActions } from "alacrity-shared";
+import { IPlayerIdSetEvent, BackendWebsocketActions } from "alacrity-shared"
 
 const onConnect = async (event: APIGatewayEvent) => {
   const {
     requestContext: { routeKey, connectionId },
-  } = event;
-  console.log("onConnect: recieved route key:", routeKey);
-  console.log("connectionId:", connectionId);
+  } = event
+  console.log("onConnect: recieved route key:", routeKey)
+  console.log("connectionId:", connectionId)
 
   await ws.sendMessage<IPlayerIdSetEvent>({
     connectionId,
@@ -18,7 +18,9 @@ const onConnect = async (event: APIGatewayEvent) => {
       action: BackendWebsocketActions.PlayerIdSet,
       playerId: connectionId,
     },
-  });
-};
+  })
 
-export const handler = middyfy(onConnect);
+  return { statusCode: 200 }
+}
+
+export const handler = middyfy(onConnect)
