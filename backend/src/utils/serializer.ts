@@ -1,12 +1,26 @@
-import { IRoom } from "alacrity-shared"
+import { IPlayer, IGame } from "alacrity-shared"
 import { database } from "@services"
 import { getGame, getPlayers } from "./mappers"
 
-export const getSerializedRoom = async ({ roomId }: { roomId: string }): Promise<IRoom> => {
+export const getSerializedPlayerPool = async ({
+  roomId,
+}: {
+  roomId: string
+}): Promise<IPlayer[]> => {
+  const room = await database.room.get({ roomId })
+  const players = getPlayers(room).map((player) => ({
+    id: player.id,
+    name: player.name,
+  }))
+
+  return players
+}
+
+export const getSerializedCurrentGame = async ({ roomId }: { roomId: string }): Promise<IGame> => {
   try {
     const room = await database.room.get({ roomId })
     const game = getGame(room)
-    const players: IRoom["players"] = getPlayers(room).map(({ player }) => {
+    const players: IPlayer[] = getPlayers(room).map((player) => {
       const gamePlayer = game?.players.find((gamePlayer) => player.id === gamePlayer.id)
 
       return {
@@ -17,19 +31,16 @@ export const getSerializedRoom = async ({ roomId }: { roomId: string }): Promise
       }
     })
 
-    return {
-      id: roomId,
-      players,
-      game: game
-        ? {
-            id: game.id,
-            totalDrawCardsRemaining: game.drawPile.length,
-            wildCard: game.wildCardPile[game.wildCardPile.length - 1],
-            currentPlayerId: game.currentPlayerId,
-            status: game.status,
-          }
-        : null,
-    }
+    return game
+      ? {
+          id: game.id,
+          players,
+          totalDrawCardsRemaining: game.drawPile.length,
+          wildCard: game.wildCardPile[game.wildCardPile.length - 1],
+          currentPlayerId: game.currentPlayerId,
+          status: game.status,
+        }
+      : null
   } catch (e) {
     return null
   }

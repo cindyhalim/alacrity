@@ -1,6 +1,6 @@
 import { config } from "@utils"
 import { dynamoDb } from "./dynamoDb"
-import { IGame, IPlayer, IRoomIndex, TRoomItems } from "./types"
+import { IGameModel, IPlayerModel, IRoomIndex, TRoomItems } from "./types"
 
 const getPlayerIndexes = ({
   playerId,
@@ -61,7 +61,7 @@ const deleteGame = async ({ roomId, gameId }: { roomId: string; gameId: string }
   }
 }
 
-const updateGame = async ({ roomId, game }: { roomId: string; game: IGame }) => {
+const updateGame = async ({ roomId, game }: { roomId: string; game: IGameModel }) => {
   try {
     const { pk, sk } = getGameIndexes({ gameId: game.id, roomId })
     await dynamoDb
@@ -83,7 +83,7 @@ const updateGame = async ({ roomId, game }: { roomId: string; game: IGame }) => 
   }
 }
 
-const addGame = async ({ roomId, game }: { roomId: string; game: IGame }) => {
+const addGame = async ({ roomId, game }: { roomId: string; game: IGameModel }) => {
   try {
     const { pk, sk } = getGameIndexes({ gameId: game.id, roomId })
 
@@ -103,7 +103,7 @@ const addGame = async ({ roomId, game }: { roomId: string; game: IGame }) => {
   }
 }
 
-const addPlayer = async ({ roomId, player }: { roomId: string; player: IPlayer }) => {
+const addPlayer = async ({ roomId, player }: { roomId: string; player: IPlayerModel }) => {
   try {
     const { pk, sk } = getPlayerIndexes({ roomId, playerId: player.id })
     await dynamoDb

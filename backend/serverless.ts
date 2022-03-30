@@ -1,5 +1,5 @@
-import { alacrityTable, cardsBucket, functions } from "@resources";
-import { Serverless } from "@utils";
+import { alacrityTable, cardsBucket, functions } from "@resources"
+import { Serverless } from "@utils"
 
 const serverlessConfiguration: Serverless = {
   service: "alacrity",
@@ -23,7 +23,8 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       CARDS_BUCKET_NAME: "${self:service.name}-cards-${self:provider.stage}",
-      CARDS_DATA_KEY: "",
+      // TODO: update this
+      CARDS_DATA_KEY: "blah",
       TABLE_NAME: "${self:service.name}-${self:provider.stage}",
       WS_ENDPOINT: {
         "Fn::Join": [
@@ -59,6 +60,6 @@ const serverlessConfiguration: Serverless = {
       ...cardsBucket,
     },
   },
-};
+}
 
-module.exports = serverlessConfiguration;
+module.exports = serverlessConfiguration
