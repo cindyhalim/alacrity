@@ -1,20 +1,20 @@
-import { config } from "@utils";
+import { config } from "@utils"
 
-import { dynamoDb } from "./dynamoDb";
-import { IConnectionItem, IConnectionIndex } from "./types";
+import { dynamoDb } from "./dynamoDb"
+import { IConnectionItem, IConnectionIndex } from "./types"
 
 const getConnectionIndexes = (connectionId: string): IConnectionIndex => ({
   pk: `connection_${connectionId}`,
   sk: "connection",
-});
+})
 
 const getConnection = async ({
   connectionId,
 }: {
-  connectionId: string;
+  connectionId: string
 }): Promise<IConnectionItem | null> => {
   try {
-    const { pk, sk } = getConnectionIndexes(connectionId);
+    const { pk, sk } = getConnectionIndexes(connectionId)
     const response = await dynamoDb
       .get({
         TableName: config.dynamoDbTableName,
@@ -23,46 +23,45 @@ const getConnection = async ({
           sk,
         },
       })
-      .promise();
+      .promise()
 
-    if (response.Item) return response.Item as IConnectionItem;
+    if (response.Item) return response.Item as IConnectionItem
 
-    return null;
+    return null
   } catch (e) {
-    console.log(`Error getting connection ${connectionId}`, e.message);
-    throw e;
+    console.log(`Error getting connection ${connectionId}`, e.message)
+    throw e
   }
-};
+}
 
 const updateConnection = async ({
   connectionId,
   roomId,
 }: {
-  connectionId: string;
-  roomId: string;
+  connectionId: string
+  roomId: string
 }) => {
   try {
-    const { pk, sk } = getConnectionIndexes(connectionId);
-    const attributes = { roomId };
+    const { pk, sk } = getConnectionIndexes(connectionId)
     return await dynamoDb
       .put({
         TableName: config.dynamoDbTableName,
         Item: {
           pk,
           sk,
-          attributes,
+          roomId,
         },
       })
-      .promise();
+      .promise()
   } catch (e) {
-    console.log(`Error updating connection ${connectionId}`, e.message);
-    throw e;
+    console.log(`Error updating connection ${connectionId}`, e.message)
+    throw e
   }
-};
+}
 
 const deleteConnection = async ({ connectionId }: { connectionId: string }) => {
   try {
-    const { pk, sk } = getConnectionIndexes(connectionId);
+    const { pk, sk } = getConnectionIndexes(connectionId)
     return await dynamoDb
       .delete({
         TableName: config.dynamoDbTableName,
@@ -71,15 +70,15 @@ const deleteConnection = async ({ connectionId }: { connectionId: string }) => {
           sk,
         },
       })
-      .promise();
+      .promise()
   } catch (e) {
-    console.log(`Error updating connection ${connectionId}`, e.message);
-    throw e;
+    console.log(`Error updating connection ${connectionId}`, e.message)
+    throw e
   }
-};
+}
 
 export const connection = {
   get: getConnection,
   update: updateConnection,
   delete: deleteConnection,
-};
+}

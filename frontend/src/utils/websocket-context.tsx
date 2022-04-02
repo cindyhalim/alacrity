@@ -6,10 +6,13 @@ import {
   BackendWebsocketActions,
   IAdminJoinedEvent,
   FrontendWebsocketActions,
+  IPlayerJoinedEvent,
 } from "alacrity-shared"
 import { config } from "./environment"
 import { randFood } from "@ngneat/falso"
-import { useEffect, useRef, createContext, useState, useContext } from "react"
+import { useEffect, useRef, createContext, useContext } from "react"
+import { useAppSelector } from "src/redux/utils"
+import { getIsAdmin } from "./helpers"
 
 const generateRandomId = () => {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
@@ -28,8 +31,11 @@ export const WSContextProvider: React.FC = ({ children }) => {
   const dispatch = useDispatch()
   const ws = useRef<null | WebSocket>(null)
 
-  const isAdmin = !window.location.pathname.slice(1)
-  const [roomId] = useState(window.location.pathname.slice(1) || generateRandomId())
+  const roomId = useAppSelector((state) => state.roomId)
+
+  useEffect(() => {
+    dispatch(actions.setRoomId(window.location.pathname.slice(1) || generateRandomId()))
+  }, [dispatch])
 
   useEffect(() => {
     const initialize = async () => {
@@ -50,22 +56,30 @@ export const WSContextProvider: React.FC = ({ children }) => {
         }
       }
 
-      ws.current.onopen = (event) => {
+      ws.current.onopen = () => {
         console.log("roomid", roomId)
-        if (isAdmin) {
+        const username = randFood({ origin: "japan" })
+        if (getIsAdmin()) {
           const adminJoinedEvent: IAdminJoinedEvent = {
             roomId,
             action: FrontendWebsocketActions.AdminJoined,
-            username: randFood({ origin: "japan" }),
+            username,
           }
           ws.current?.send(JSON.stringify(adminJoinedEvent))
+        } else {
+          const playerJoinedEvent: IPlayerJoinedEvent = {
+            action: FrontendWebsocketActions.PlayerJoined,
+            roomId,
+            username,
+          }
+          ws.current?.send(JSON.stringify(playerJoinedEvent))
         }
       }
     }
-    initialize()
-
-    // eslint-disable-next-line
-  }, [])
+    if (roomId) {
+      initialize()
+    }
+  }, [dispatch, roomId])
 
   return (
     <WSContext.Provider
