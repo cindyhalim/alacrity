@@ -1,9 +1,13 @@
 import React from "react"
-import { Flex, Image, Text } from "rebass"
+import { Flex, Image, SxStyleProp, Text } from "rebass"
 import { theme } from "src/theme"
 import backgroundImgSrc from "src/assets/background.png"
 
-export const BaseTitleScreen: React.FC = ({ children }) => {
+interface IBaseTitleScreen {
+  sx?: SxStyleProp
+}
+
+export const BaseTitleScreen: React.FC<IBaseTitleScreen> = ({ children, sx }) => {
   return (
     <Flex
       sx={{
@@ -46,6 +50,7 @@ export const BaseTitleScreen: React.FC = ({ children }) => {
           width: 525,
           alignItems: "center",
           backdropFilter: "blur(5px)",
+          ...sx,
         }}
       >
         {children}

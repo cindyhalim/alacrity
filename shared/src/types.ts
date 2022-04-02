@@ -89,6 +89,7 @@ export type TBackendWebsocketEvent =
   | IPlayerPoolUpdatedEvent
   | IGameUpdatedEvent
   | IAdminDisconnectedEvent
+  | IRoomNotFoundEvent
 
 // Frontend events
 

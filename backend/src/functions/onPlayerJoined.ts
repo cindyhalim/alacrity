@@ -30,7 +30,7 @@ export const handler = async (event: APIGatewayEvent) => {
       },
     })
     console.log("Admin not found")
-    return
+    return { statusCode: 200 }
   }
 
   console.log("Adding connection:", connectionId)
