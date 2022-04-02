@@ -24,7 +24,6 @@ const getRoomItems = async ({ roomId }: { roomId: string }): Promise<TRoomItems 
     const response = await dynamoDb
       .query({
         TableName: config.dynamoDbTableName,
-        IndexName: "pk",
         KeyConditionExpression: `pk = :pk`,
         ExpressionAttributeValues: {
           ":pk": pk,
