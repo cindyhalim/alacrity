@@ -5,12 +5,14 @@ export interface IState {
   playerId: string
   playerPool: IPlayer[]
   currentGame: IGame | null
+  roomId: string
 }
 
 const initialState: IState = {
   playerId: "",
   playerPool: [],
   currentGame: null,
+  roomId: "",
 }
 
 export const { actions, reducer } = createSlice({
@@ -28,6 +30,10 @@ export const { actions, reducer } = createSlice({
     setPlayerPool: (state, action: PayloadAction<IPlayer[]>) => ({
       ...state,
       playerPool: action.payload,
+    }),
+    setRoomId: (state, action: PayloadAction<string>) => ({
+      ...state,
+      roomId: action.payload,
     }),
   },
 })
