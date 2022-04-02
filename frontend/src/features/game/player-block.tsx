@@ -1,4 +1,4 @@
-import { IPlayer, IPlayingCard } from "alacrity-shared"
+import { IGamePlayer, IPlayingCard } from "alacrity-shared"
 import React from "react"
 import { Flex, Text } from "rebass"
 import { theme } from "src/theme"
@@ -6,7 +6,7 @@ import { CardEmptyState } from "../../components/card-empty-state"
 import { Card } from "../../components/card"
 
 interface IPlayerBlockProps {
-  player?: IPlayer
+  player?: IGamePlayer
   isMe: boolean
 }
 
@@ -42,12 +42,7 @@ const OpponentBlock: React.FC<IOpponentBlockProps> = ({ playerName, card }) => {
         {playerName.toUpperCase()}
       </Text>
       {card ? (
-        <Card
-          text={card?.text}
-          symbol={card?.symbol}
-          size={"small"}
-          side={"front"}
-        />
+        <Card text={card?.text} symbol={card?.symbol} size={"small"} side={"front"} />
       ) : (
         <CardEmptyState size={"small"} />
       )}

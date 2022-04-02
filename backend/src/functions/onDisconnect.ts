@@ -6,10 +6,10 @@ import {
   IPlayerPoolUpdatedEvent,
 } from "alacrity-shared"
 
-import { getGame, getPlayers, getSerializedCurrentGame, middyfy } from "@utils"
+import { getGame, getPlayers, getSerializedCurrentGame } from "@utils"
 import { database, ws } from "@services"
 
-const onDisconnect = async (event: APIGatewayEvent) => {
+export const handler = async (event: APIGatewayEvent) => {
   const {
     requestContext: { routeKey, connectionId },
   } = event
@@ -90,5 +90,3 @@ const onDisconnect = async (event: APIGatewayEvent) => {
 
   return { statusCode: 200 }
 }
-
-export const handler = middyfy(onDisconnect)
