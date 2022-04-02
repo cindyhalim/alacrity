@@ -59,21 +59,20 @@ export const WaitingRoom: React.FC = () => {
           ))}
         </Flex>
       </Flex>
-      <Flex sx={{ flexDirection: "column" }}>
-        {getIsAdmin() && (
-          <Flex sx={{ marginTop: 60, width: "100%" }}>
-            <Button
-              onClick={() => navigator.clipboard.writeText(window.location.href + roomId)}
-              sx={{ flex: 1 }}
-            >
-              COPY LINK
-            </Button>
-            <Button disabled={players.length > 4} sx={{ flex: 1, marginLeft: 20 }}>
-              START NEW GAME
-            </Button>
-          </Flex>
-        )}
-      </Flex>
+
+      {getIsAdmin() && (
+        <Flex sx={{ marginTop: 60, width: "100%" }}>
+          <Button
+            onClick={() => navigator.clipboard.writeText(window.location.href + roomId)}
+            sx={{ flex: 1, fontSize: 20 }}
+          >
+            COPY LINK
+          </Button>
+          <Button disabled={players.length > 4} sx={{ flex: 1, marginLeft: 20, fontSize: 20 }}>
+            START NEW GAME
+          </Button>
+        </Flex>
+      )}
     </BaseTitleScreen>
   )
 }
