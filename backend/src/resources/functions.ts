@@ -31,19 +31,27 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
-  // onGameStarted: {
-  //   iamRoleStatementsInherit: true,
-  //   iamRoleStatements: [
-  //     {
-  //       Effect: "Allow",
-  //       Action: ["s3:*"],
-  //       Resource: [
-  //         { "Fn::GetAtt": ["CardsBucket", "Arn"] },
-  //         { "Fn::Join": ["/", [{ "Fn::GetAtt": ["DataBucket", "Arn"] }, "*"]] },
-  //       ],
-  //     },
-  //   ],
-  // },
+  onGameStarted: {
+    handler: `src/functions/onGameStarted.handler`,
+    events: [
+      {
+        websocket: {
+          route: "game_started",
+        },
+      },
+    ],
+    iamRoleStatementsInherit: true,
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: ["s3:*"],
+        Resource: [
+          { "Fn::GetAtt": ["CardsBucket", "Arn"] },
+          { "Fn::Join": ["/", [{ "Fn::GetAtt": ["DataBucket", "Arn"] }, "*"]] },
+        ],
+      },
+    ],
+  },
   // onCardDrawn: {
   //   events: [
   //     {
