@@ -1,8 +1,6 @@
 import { APIGatewayEvent } from "aws-lambda"
 
-import { middyfy } from "@utils"
-
-const onConnect = async (event: APIGatewayEvent) => {
+export const handler = async (event: APIGatewayEvent) => {
   const {
     requestContext: { routeKey, connectionId },
   } = event
@@ -11,5 +9,3 @@ const onConnect = async (event: APIGatewayEvent) => {
 
   return { statusCode: 200 }
 }
-
-export const handler = middyfy(onConnect)

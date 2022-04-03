@@ -9,7 +9,7 @@ import { PlayerBlock } from "./player-block"
 import { CardSymbol } from "alacrity-shared"
 
 export const GameRoom: React.FC = () => {
-  const players = useAppSelector((state) => state.room.players)
+  const players = useAppSelector((state) => state.currentGame?.players || [])
   const playerId = useAppSelector((state) => state.playerId)
 
   const opponentPlayers = players.filter((player) => player.id !== playerId)
@@ -35,11 +35,7 @@ export const GameRoom: React.FC = () => {
         }}
       >
         {opponentPlayers.map((opponentPlayer) => (
-          <PlayerBlock
-            key={opponentPlayer.id}
-            player={opponentPlayer}
-            isMe={false}
-          />
+          <PlayerBlock key={opponentPlayer.id} player={opponentPlayer} isMe={false} />
         ))}
       </Flex>
       <Flex sx={{ justifyContent: "center", marginTop: 87 }}>

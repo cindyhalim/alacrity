@@ -5,18 +5,18 @@ import {
   IPlayerPoolUpdatedEvent,
 } from "alacrity-shared"
 
-import { getSerializedPlayerPool, middyfy, ValidatedAPIGatewayEvent } from "@utils"
+import { getSerializedPlayerPool } from "@utils"
 import { database, ws } from "@services"
+import { APIGatewayEvent } from "aws-lambda"
 
-const onAdminJoined = async (event: ValidatedAPIGatewayEvent<IAdminJoinedEvent>) => {
+export const handler = async (event: APIGatewayEvent) => {
   const {
     requestContext: { routeKey, connectionId },
-    body: { roomId, username },
   } = event
-
+  const { roomId, username }: IAdminJoinedEvent = JSON.parse(event.body)
   console.log("onAdminJoined: recieved route key:", routeKey)
 
-  console.log("Adding connection:", connectionId)
+  console.log("Adding connection:", connectionId, "to room", roomId)
   await database.connection.update({ connectionId, roomId })
 
   console.log("Adding admin:", connectionId)
@@ -49,5 +49,3 @@ const onAdminJoined = async (event: ValidatedAPIGatewayEvent<IAdminJoinedEvent>)
 
   return { statusCode: 200 }
 }
-
-export const handler = middyfy(onAdminJoined)

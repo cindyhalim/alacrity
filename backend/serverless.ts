@@ -46,6 +46,7 @@ const serverlessConfiguration: Serverless = {
           "dynamodb:GetItem",
           "dynamodb:UpdateItem",
           "dynamodb:PutItem",
+          "dynamodb:Query",
         ],
         Resource: [{ "Fn::GetAtt": ["AlacrityTable", "Arn"] }],
       },

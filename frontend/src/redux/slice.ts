@@ -1,33 +1,39 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { IRoom } from "alacrity-shared"
+import { IPlayer, IGame } from "alacrity-shared"
 
 export interface IState {
   playerId: string
-  room: IRoom
-}
-
-const initialRoomState: IRoom = {
-  id: "",
-  players: [],
-  game: null,
+  playerPool: IPlayer[]
+  currentGame: IGame | null
+  roomId: string
 }
 
 const initialState: IState = {
   playerId: "",
-  room: initialRoomState,
+  playerPool: [],
+  currentGame: null,
+  roomId: "",
 }
 
 export const { actions, reducer } = createSlice({
   name: "alacrity",
   initialState,
   reducers: {
-    updateRoom: (state, action: PayloadAction<IRoom>) => ({
+    setGame: (state, action: PayloadAction<IGame | null>) => ({
       ...state,
-      room: action.payload,
+      currentGame: action.payload,
     }),
     setPlayerId: (state, action: PayloadAction<string>) => ({
       ...state,
       playerId: action.payload,
+    }),
+    setPlayerPool: (state, action: PayloadAction<IPlayer[]>) => ({
+      ...state,
+      playerPool: action.payload,
+    }),
+    setRoomId: (state, action: PayloadAction<string>) => ({
+      ...state,
+      roomId: action.payload,
     }),
   },
 })

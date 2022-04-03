@@ -6,10 +6,10 @@ import {
   IPlayerPoolUpdatedEvent,
 } from "alacrity-shared"
 
-import { getGame, getPlayers, getSerializedCurrentGame, middyfy } from "@utils"
+import { getGame, getPlayers, getSerializedCurrentGame } from "@utils"
 import { database, ws } from "@services"
 
-const onDisconnect = async (event: APIGatewayEvent) => {
+export const handler = async (event: APIGatewayEvent) => {
   const {
     requestContext: { routeKey, connectionId },
   } = event
@@ -17,7 +17,9 @@ const onDisconnect = async (event: APIGatewayEvent) => {
   console.log("onDisconnect: recieved route key:", routeKey)
   console.log("connectionId:", connectionId)
 
-  const roomId = (await database.connection.get({ connectionId }))?.roomId
+  const connection = await database.connection.get({ connectionId })
+  console.log("connection", connection)
+  const roomId = connection?.roomId
 
   await database.connection.delete({ connectionId })
 
@@ -27,8 +29,11 @@ const onDisconnect = async (event: APIGatewayEvent) => {
   }
 
   const room = await database.room.get({ roomId })
+  console.log("room", room)
   const game = getGame(room)
+  console.log("game", game)
   const players = getPlayers(room)
+  console.log("players", players)
 
   const isCurrentPlayerAdmin = players.find(
     (player) => player.id === connectionId && player.isAdmin,
@@ -56,16 +61,10 @@ const onDisconnect = async (event: APIGatewayEvent) => {
     return
   }
 
-  const updatedGame = {
-    ...game,
-    players: game.players.filter((player) => player.id !== connectionId),
-  }
-  await database.room.updateGame({ roomId, game: updatedGame })
-
   await Promise.all(
-    remainingPlayers.map(() =>
+    remainingPlayers.map((player) =>
       ws.sendMessage<IPlayerPoolUpdatedEvent>({
-        connectionId,
+        connectionId: player.id,
         body: {
           action: BackendWebsocketActions.PlayerPoolUpdated,
           players: remainingPlayers,
@@ -74,21 +73,26 @@ const onDisconnect = async (event: APIGatewayEvent) => {
     ),
   )
 
-  const currentGame = await getSerializedCurrentGame({ roomId })
+  if (game) {
+    const updatedGame = {
+      ...game,
+      players: game.players.filter((player) => player.id !== connectionId),
+    }
+    await database.room.updateGame({ roomId, game: updatedGame })
+    const currentGame = await getSerializedCurrentGame({ roomId })
 
-  await Promise.all(
-    remainingPlayers.map(() =>
-      ws.sendMessage<IGameUpdatedEvent>({
-        connectionId,
-        body: {
-          action: BackendWebsocketActions.GameUpdated,
-          currentGame,
-        },
-      }),
-    ),
-  )
+    await Promise.all(
+      remainingPlayers.map((player) =>
+        ws.sendMessage<IGameUpdatedEvent>({
+          connectionId: player.id,
+          body: {
+            action: BackendWebsocketActions.GameUpdated,
+            currentGame,
+          },
+        }),
+      ),
+    )
+  }
 
   return { statusCode: 200 }
 }
-
-export const handler = middyfy(onDisconnect)
