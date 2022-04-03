@@ -23,8 +23,7 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       CARDS_BUCKET_NAME: "${self:service.name}-cards-${self:provider.stage}",
-      // TODO: update this
-      CARDS_DATA_KEY: "blah",
+      CARDS_DATA_KEY: "cards-data.json",
       TABLE_NAME: "${self:service.name}-${self:provider.stage}",
       WS_ENDPOINT: {
         "Fn::Join": [
