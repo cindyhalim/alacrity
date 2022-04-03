@@ -7,6 +7,7 @@ import { Card } from "../../components/card"
 
 interface IPlayerBlockProps {
   player?: IGamePlayer
+  hasCurrentTurn: boolean
   isMe: boolean
 }
 
@@ -15,19 +16,20 @@ interface IMeBlockProps {
 }
 interface IOpponentBlockProps extends IMeBlockProps {
   playerName: string
+  hasCurrentTurn: boolean
 }
 
-export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isMe }) => {
+export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isMe, hasCurrentTurn }) => {
   const playPile = player?.playPile
   const card = playPile ? playPile[playPile.length - 1] : undefined
   return isMe ? (
     <MeBlock card={card} />
   ) : (
-    <OpponentBlock playerName={player?.name || ""} card={card} />
+    <OpponentBlock playerName={player?.name || ""} card={card} hasCurrentTurn={hasCurrentTurn} />
   )
 }
 
-const OpponentBlock: React.FC<IOpponentBlockProps> = ({ playerName, card }) => {
+const OpponentBlock: React.FC<IOpponentBlockProps> = ({ playerName, card, hasCurrentTurn }) => {
   return (
     <Flex flexDirection={"column"}>
       <Text
@@ -36,7 +38,7 @@ const OpponentBlock: React.FC<IOpponentBlockProps> = ({ playerName, card }) => {
           fontSize: 16,
           textAlign: "center",
           marginBottom: "7px",
-          color: theme.colors.black,
+          color: hasCurrentTurn ? theme.colors.red : theme.colors.black,
         }}
       >
         {playerName.toUpperCase()}
