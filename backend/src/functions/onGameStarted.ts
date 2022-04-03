@@ -7,13 +7,19 @@ import { APIGatewayEvent } from "aws-lambda"
 import { getCardPile, shuffle } from "../helpers/cards"
 
 export const handler = async (event: APIGatewayEvent) => {
-  const body: IGameStartedEvent = JSON.parse(event.body)
-  const { roomId } = body
+  const {
+    requestContext: { routeKey },
+  } = event
+  const { roomId }: IGameStartedEvent = JSON.parse(event.body)
+
+  console.log("onGameStarted: recieved route key:", routeKey)
 
   const data = await cardsData.get()
 
+  console.log("creating card piles")
   const { wildCardPile, drawPile } = getCardPile({ cardsData: data })
 
+  console.log("getting game players")
   const room = await database.room.get({ roomId })
   const rawPlayers = getPlayers(room)
   const randomOrderedPlayers = shuffle(rawPlayers)
@@ -29,11 +35,13 @@ export const handler = async (event: APIGatewayEvent) => {
     drawPile,
     wildCardPile,
     status: "started",
-    currentPlayerId: randomOrderedPlayers[0],
+    currentPlayerId: randomOrderedPlayers[0].id,
   }
 
+  console.log("adding game to db")
   await database.room.addGame({ roomId, game: newGame })
 
+  console.log("sending event:", BackendWebsocketActions.GameUpdated)
   const message = players.map((player) =>
     ws.sendMessage<IGameUpdatedEvent>({
       connectionId: player.id,

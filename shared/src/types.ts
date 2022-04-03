@@ -129,3 +129,4 @@ export type TFrontendWebsocketEvent =
   | ICardDrawnEvent
   | ICardWonEvent
   | IGameEndedEvent
+  | IGameStartedEvent
