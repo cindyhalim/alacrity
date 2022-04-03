@@ -47,7 +47,7 @@ export const functions: Serverless["functions"] = {
         Action: ["s3:*"],
         Resource: [
           { "Fn::GetAtt": ["CardsBucket", "Arn"] },
-          { "Fn::Join": ["/", [{ "Fn::GetAtt": ["DataBucket", "Arn"] }, "*"]] },
+          { "Fn::Join": ["/", [{ "Fn::GetAtt": ["CardsBucket", "Arn"] }, "*"]] },
         ],
       },
     ],
