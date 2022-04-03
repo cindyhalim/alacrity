@@ -1,42 +1,27 @@
-import React, { useState } from "react"
+import React from "react"
 import { Flex, Text } from "rebass"
 import { Button } from "src/components"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
-import { GameDifficulty } from "alacrity-shared"
 import { BaseTitleScreen } from "src/components/base-title-screen"
 import { getIsAdmin } from "src/utils/helpers"
+import { useWSContext } from "src/utils/websocket-context"
+import { FrontendWebsocketActions } from "alacrity-shared"
 
 export const WaitingRoom: React.FC = () => {
-  const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty>(
-    GameDifficulty.MEDIUM,
-  )
   const players = useAppSelector((state) => state.playerPool)
   const roomId = useAppSelector((state) => state.roomId)
   const playerId = useAppSelector((state) => state.playerId)
+  const { sendMessage } = useWSContext()
+
+  const handleOnStartNewGameClick = () => {
+    sendMessage({
+      action: FrontendWebsocketActions.GameStarted,
+      roomId,
+    })
+  }
   return (
     <BaseTitleScreen>
-      <Text
-        sx={{
-          fontFamily: theme.fonts.antonio,
-          fontSize: 28,
-          marginBottom: 20,
-        }}
-      >
-        DIFFICULTY
-      </Text>
-      <Flex sx={{ marginBottom: 30 }}>
-        {Object.values(GameDifficulty).map((difficulty, idx) => (
-          <Button
-            key={idx}
-            active={selectedDifficulty === difficulty}
-            sx={{ marginLeft: idx === 0 ? 0 : 20 }}
-            onClick={() => setSelectedDifficulty(difficulty)}
-          >
-            {difficulty.replace("_", " ")}
-          </Button>
-        ))}
-      </Flex>
       <Text
         sx={{
           fontFamily: theme.fonts.antonio,
@@ -65,7 +50,11 @@ export const WaitingRoom: React.FC = () => {
           >
             COPY LINK
           </Button>
-          <Button disabled={players.length > 4} sx={{ flex: 1, marginLeft: 20 }}>
+          <Button
+            disabled={players.length === 1 || players.length > 4}
+            sx={{ flex: 1, marginLeft: 20 }}
+            onClick={handleOnStartNewGameClick}
+          >
             START NEW GAME
           </Button>
         </Flex>
