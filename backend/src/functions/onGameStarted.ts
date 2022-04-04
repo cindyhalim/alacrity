@@ -30,7 +30,7 @@ export const handler = async (event: APIGatewayEvent) => {
   }))
 
   const newGame: IGameModel = {
-    id: `game_${nanoid()}`,
+    id: nanoid(),
     players,
     drawPile,
     wildCardPile: [],
