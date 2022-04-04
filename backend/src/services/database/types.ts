@@ -28,8 +28,8 @@ export interface IPlayerItem extends IRoomIndex {
 export interface IGameModel {
   id: string
   players: IGamePlayer[]
-  drawPile: IPlayingCard[]
-  wildCardPile: IWildCard[]
+  drawPile: (IPlayingCard | IWildCard)[]
+  wildCardPile: IWildCard[] | null
   status: "started" | "ended"
   currentPlayerId: string
 }

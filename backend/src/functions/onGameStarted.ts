@@ -4,7 +4,7 @@ import { BackendWebsocketActions, IGameStartedEvent, IGameUpdatedEvent } from "a
 import { cardsData, database, IGameModel, IGamePlayer, ws } from "@services"
 import { getPlayers } from "@utils"
 import { APIGatewayEvent } from "aws-lambda"
-import { getCardPile, shuffle } from "../helpers/cards"
+import { getDrawPile, shuffle } from "../helpers/cards"
 
 export const handler = async (event: APIGatewayEvent) => {
   const {
@@ -17,7 +17,7 @@ export const handler = async (event: APIGatewayEvent) => {
   const data = await cardsData.get()
 
   console.log("creating card piles")
-  const { wildCardPile, drawPile } = getCardPile({ cardsData: data })
+  const drawPile = getDrawPile({ cardsData: data })
 
   console.log("getting game players")
   const room = await database.room.get({ roomId })
@@ -33,7 +33,7 @@ export const handler = async (event: APIGatewayEvent) => {
     id: `game_${nanoid()}`,
     players,
     drawPile,
-    wildCardPile,
+    wildCardPile: [],
     status: "started",
     currentPlayerId: randomOrderedPlayers[0].id,
   }
@@ -51,7 +51,7 @@ export const handler = async (event: APIGatewayEvent) => {
           id: newGame.id,
           players: newGame.players,
           totalDrawCardsRemaining: newGame.drawPile.length,
-          wildCard: newGame.wildCardPile[newGame.wildCardPile.length - 1],
+          wildCard: null,
           currentPlayerId: newGame.currentPlayerId,
           status: newGame.status,
         },
