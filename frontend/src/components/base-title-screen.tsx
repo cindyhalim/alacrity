@@ -50,7 +50,7 @@ export const BaseTitleScreen: React.FC<IBaseTitleScreenProps> = ({ children, sx 
           width: 550,
           alignItems: "center",
           backdropFilter: "blur(5px)",
-          height: 422,
+          minHeight: 300,
           ...sx,
         }}
       >
