@@ -3,11 +3,11 @@ import { Flex, Image, SxStyleProp, Text } from "rebass"
 import { theme } from "src/theme"
 import backgroundImgSrc from "src/assets/background.png"
 
-interface IBaseTitleScreenProps {
+interface IBaseTitleScreen {
   sx?: SxStyleProp
 }
 
-export const BaseTitleScreen: React.FC<IBaseTitleScreenProps> = ({ children, sx }) => {
+export const BaseTitleScreen: React.FC<IBaseTitleScreen> = ({ children, sx }) => {
   return (
     <Flex
       sx={{
