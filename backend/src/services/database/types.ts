@@ -29,7 +29,7 @@ export interface IGameModel {
   id: string
   players: IGamePlayer[]
   drawPile: (IPlayingCard | IWildCard)[]
-  wildCardPile: IWildCard[] | null
+  wildCardPile: IWildCard[]
   status: "started" | "ended"
   currentPlayerId: string
 }
