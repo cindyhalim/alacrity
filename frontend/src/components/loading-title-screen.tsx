@@ -1,6 +1,9 @@
 import React from "react"
 import { BaseTitleScreen } from "./base-title-screen"
 
-export const LoadingTitleScreen: React.FC = () => {
-  return <BaseTitleScreen>LOADING</BaseTitleScreen>
+interface ILoadingTitleScreenProps {
+  text?: string
+}
+export const LoadingTitleScreen: React.FC<ILoadingTitleScreenProps> = ({ text }) => {
+  return <BaseTitleScreen>{text}</BaseTitleScreen>
 }

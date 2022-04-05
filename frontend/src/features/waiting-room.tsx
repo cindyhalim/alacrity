@@ -7,18 +7,26 @@ import { BaseTitleScreen } from "src/components/base-title-screen"
 import { getIsAdmin } from "src/utils/helpers"
 import { useWSContext } from "src/utils/websocket-context"
 import { FrontendWebsocketActions } from "alacrity-shared"
+import { useDispatch } from "react-redux"
+import { actions } from "src/redux/slice"
 
 export const WaitingRoom: React.FC = () => {
   const players = useAppSelector((state) => state.playerPool)
   const roomId = useAppSelector((state) => state.roomId)
   const playerId = useAppSelector((state) => state.playerId)
   const { sendMessage } = useWSContext()
+  const dispatch = useDispatch()
 
   const handleOnStartNewGameClick = () => {
-    sendMessage({
-      action: FrontendWebsocketActions.GameStarted,
-      roomId,
-    })
+    try {
+      dispatch(actions.setStartNewGameStatus("loading"))
+      sendMessage({
+        action: FrontendWebsocketActions.GameStarted,
+        roomId,
+      })
+    } catch {
+      dispatch(actions.setStartNewGameStatus("error"))
+    }
   }
 
   return (
