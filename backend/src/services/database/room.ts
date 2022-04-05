@@ -85,6 +85,7 @@ const updateGame = async ({ roomId, game }: { roomId: string; game: IGameModel }
 const addGame = async ({ roomId, game }: { roomId: string; game: IGameModel }) => {
   try {
     const { pk, sk } = getGameIndexes({ gameId: game.id, roomId })
+
     await dynamoDb
       .put({
         TableName: config.dynamoDbTableName,
