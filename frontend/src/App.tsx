@@ -1,7 +1,6 @@
 import React from "react"
-import { WaitingRoom } from "./features"
+import { WaitingRoom, GameRoom } from "./features"
 import { useAppSelector } from "./redux/utils"
-import { Box } from "rebass"
 import { LoadingTitleScreen } from "./components/loading-title-screen"
 import { ErrorScreen } from "./features/error/error-screen"
 
@@ -13,9 +12,9 @@ export const App: React.FC = () => {
   if (roomStatus !== "ready") {
     return <ErrorScreen />
   }
+
   if (!playerId) {
     return <LoadingTitleScreen />
   }
-
-  return gameStatus !== "started" ? <WaitingRoom /> : <Box>game screen</Box>
+  return gameStatus !== "started" ? <WaitingRoom /> : <GameRoom />
 }

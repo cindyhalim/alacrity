@@ -5,11 +5,22 @@ import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
 import { BaseTitleScreen } from "src/components/base-title-screen"
 import { getIsAdmin } from "src/utils/helpers"
+import { useWSContext } from "src/utils/websocket-context"
+import { FrontendWebsocketActions } from "alacrity-shared"
 
 export const WaitingRoom: React.FC = () => {
   const players = useAppSelector((state) => state.playerPool)
   const roomId = useAppSelector((state) => state.roomId)
   const playerId = useAppSelector((state) => state.playerId)
+  const { sendMessage } = useWSContext()
+
+  const handleOnStartNewGameClick = () => {
+    sendMessage({
+      action: FrontendWebsocketActions.GameStarted,
+      roomId,
+    })
+  }
+
   return (
     <BaseTitleScreen sx={{ justifyContent: "space-between" }}>
       <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
@@ -22,7 +33,7 @@ export const WaitingRoom: React.FC = () => {
         >
           PLAYERS
         </Text>
-        <Flex sx={{ flexWrap: "wrap" }}>
+        <Flex sx={{ flexWrap: "wrap", justifyContent: "center" }}>
           {players.map((player, idx) => (
             <Button
               active={player.id === playerId}
@@ -43,7 +54,11 @@ export const WaitingRoom: React.FC = () => {
           >
             COPY LINK
           </Button>
-          <Button disabled={players.length > 4} sx={{ flex: 1, marginLeft: 20, fontSize: 20 }}>
+          <Button
+            disabled={players.length === 1 || players.length > 4}
+            sx={{ flex: 1, marginLeft: 20, fontSize: 20 }}
+            onClick={handleOnStartNewGameClick}
+          >
             START NEW GAME
           </Button>
         </Flex>
