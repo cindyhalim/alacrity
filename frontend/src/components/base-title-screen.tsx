@@ -47,9 +47,10 @@ export const BaseTitleScreen: React.FC<IBaseTitleScreen> = ({ children, sx }) =>
           paddingX: 40,
           borderRadius: 15,
           backgroundColor: `${theme.colors.black}30`,
-          width: 525,
+          width: 550,
           alignItems: "center",
           backdropFilter: "blur(5px)",
+          minHeight: 300,
           ...sx,
         }}
       >
