@@ -40,17 +40,6 @@ export const functions: Serverless["functions"] = {
         },
       },
     ],
-    iamRoleStatementsInherit: true,
-    iamRoleStatements: [
-      {
-        Effect: "Allow",
-        Action: ["s3:*"],
-        Resource: [
-          { "Fn::GetAtt": ["CardsBucket", "Arn"] },
-          { "Fn::Join": ["/", [{ "Fn::GetAtt": ["CardsBucket", "Arn"] }, "*"]] },
-        ],
-      },
-    ],
   },
   // onCardDrawn: {
   //   events: [

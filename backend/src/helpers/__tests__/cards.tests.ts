@@ -1,7 +1,8 @@
 import { CardsDataJSON } from "@services"
+import { IPlayingCard, IWildCard } from "alacrity-shared"
 import {
   generateUniqueRandomFromList,
-  getCardPile,
+  getDrawPile,
   TOTAL_PLAYING_CARDS,
   TOTAL_WILD_CARDS,
 } from "../cards"
@@ -42,33 +43,51 @@ describe("cards", () => {
       expect(list).toBeDefined()
       expect(list.length).toEqual(6)
     })
+
+    it("returns no dupes", () => {
+      const categoriesWithDupes = [
+        "Amino acid",
+        "Romantic era musician",
+        "Programming language",
+        "Foreign film",
+        "South American dish",
+        "Historical general",
+        "Fictional metal/mineral",
+        "Amino acid",
+      ]
+      const list = generateUniqueRandomFromList({ max: 8, list: categoriesWithDupes })
+      expect(list).toBeDefined()
+      expect(list.length).toEqual(7)
+    })
   })
 
   describe("getCardPile", () => {
-    it("returns correct length of drawPiles with no dupes", () => {
+    it("returns 92 playing cards with no dupes", () => {
       const data: CardsDataJSON = cardsData
 
-      const { drawPile } = getCardPile({ cardsData: data })
+      const drawPile = getDrawPile({ cardsData: data })
+      const playingCards = drawPile.filter((card): card is IPlayingCard => card.type === "playing")
 
-      expect(drawPile).toBeDefined()
-      expect(drawPile.length).toBe(TOTAL_PLAYING_CARDS)
+      expect(playingCards).toBeDefined()
+      expect(playingCards.length).toBe(TOTAL_PLAYING_CARDS)
 
-      const cards = drawPile.map((card) => JSON.stringify(card))
+      const cards = playingCards.map((card) => JSON.stringify(card))
       const set = new Set(cards)
 
-      expect(set.size).toBe(drawPile.length)
+      expect(set.size).toBe(playingCards.length)
     })
 
-    it("it returns 8 unique wild cards", () => {
+    it("it returns 8 unique wild cards with no dupes", () => {
       const data: CardsDataJSON = cardsData
 
-      const { wildCardPile } = getCardPile({ cardsData: data })
+      const drawPile = getDrawPile({ cardsData: data })
+      const wildCards = drawPile.filter((card): card is IWildCard => card.type === "wildCard")
 
-      expect(wildCardPile).toBeDefined()
-      expect(wildCardPile.length).toBe(TOTAL_WILD_CARDS)
+      expect(wildCards).toBeDefined()
+      expect(wildCards.length).toBe(TOTAL_WILD_CARDS)
 
-      const cards = wildCardPile.map((card) => JSON.stringify(card))
-      const cardsSymbolsFlipped = wildCardPile.map((card) =>
+      const cards = wildCards.map((card) => JSON.stringify(card))
+      const cardsSymbolsFlipped = wildCards.map((card) =>
         JSON.stringify({
           ...card,
           symbols: [card.symbols[1], card.symbols[0]],
@@ -77,7 +96,7 @@ describe("cards", () => {
 
       const set = new Set([...cards, ...cardsSymbolsFlipped])
 
-      expect(set.size).toBe(wildCardPile.length * 2)
+      expect(set.size).toBe(wildCards.length * 2)
     })
   })
 })

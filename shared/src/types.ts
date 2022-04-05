@@ -89,6 +89,7 @@ export type TBackendWebsocketEvent =
   | IPlayerPoolUpdatedEvent
   | IGameUpdatedEvent
   | IAdminDisconnectedEvent
+  | IRoomNotFoundEvent
 
 // Frontend events
 
@@ -129,3 +130,4 @@ export type TFrontendWebsocketEvent =
   | ICardDrawnEvent
   | ICardWonEvent
   | IGameEndedEvent
+  | IGameStartedEvent

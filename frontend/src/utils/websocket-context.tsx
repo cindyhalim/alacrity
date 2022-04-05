@@ -53,6 +53,12 @@ export const WSContextProvider: React.FC = ({ children }) => {
           case BackendWebsocketActions.PlayerPoolUpdated:
             dispatch(actions.setPlayerPool(data.players))
             break
+          case BackendWebsocketActions.RoomNotFound:
+            dispatch(actions.setRoomStatus("not_found"))
+            break
+          case BackendWebsocketActions.AdminDisconnected:
+            dispatch(actions.setRoomStatus("admin_disconnected"))
+            break
         }
       }
 

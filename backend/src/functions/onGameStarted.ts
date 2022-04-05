@@ -4,16 +4,22 @@ import { BackendWebsocketActions, IGameStartedEvent, IGameUpdatedEvent } from "a
 import { cardsData, database, IGameModel, IGamePlayer, ws } from "@services"
 import { getPlayers } from "@utils"
 import { APIGatewayEvent } from "aws-lambda"
-import { getCardPile, shuffle } from "../helpers/cards"
+import { getDrawPile, shuffle } from "../helpers/cards"
 
 export const handler = async (event: APIGatewayEvent) => {
-  const body: IGameStartedEvent = JSON.parse(event.body)
-  const { roomId } = body
+  const {
+    requestContext: { routeKey },
+  } = event
+  const { roomId }: IGameStartedEvent = JSON.parse(event.body)
+
+  console.log("onGameStarted: recieved route key:", routeKey)
 
   const data = await cardsData.get()
 
-  const { wildCardPile, drawPile } = getCardPile({ cardsData: data })
+  console.log("creating card piles")
+  const drawPile = getDrawPile({ cardsData: data })
 
+  console.log("getting game players")
   const room = await database.room.get({ roomId })
   const rawPlayers = getPlayers(room)
   const randomOrderedPlayers = shuffle(rawPlayers)
@@ -24,16 +30,18 @@ export const handler = async (event: APIGatewayEvent) => {
   }))
 
   const newGame: IGameModel = {
-    id: `game_${nanoid()}`,
+    id: nanoid(),
     players,
     drawPile,
-    wildCardPile,
+    wildCardPile: [],
     status: "started",
-    currentPlayerId: randomOrderedPlayers[0],
+    currentPlayerId: randomOrderedPlayers[0].id,
   }
 
+  console.log("adding game to db")
   await database.room.addGame({ roomId, game: newGame })
 
+  console.log("sending event:", BackendWebsocketActions.GameUpdated)
   const message = players.map((player) =>
     ws.sendMessage<IGameUpdatedEvent>({
       connectionId: player.id,
@@ -43,7 +51,7 @@ export const handler = async (event: APIGatewayEvent) => {
           id: newGame.id,
           players: newGame.players,
           totalDrawCardsRemaining: newGame.drawPile.length,
-          wildCard: newGame.wildCardPile[newGame.wildCardPile.length - 1],
+          wildCard: null,
           currentPlayerId: newGame.currentPlayerId,
           status: newGame.status,
         },

@@ -50,6 +50,15 @@ const serverlessConfiguration: Serverless = {
         ],
         Resource: [{ "Fn::GetAtt": ["AlacrityTable", "Arn"] }],
       },
+
+      {
+        Effect: "Allow",
+        Action: ["s3:*"],
+        Resource: [
+          { "Fn::GetAtt": ["CardsBucket", "Arn"] },
+          { "Fn::Join": ["/", [{ "Fn::GetAtt": ["CardsBucket", "Arn"] }, "*"]] },
+        ],
+      },
     ],
     lambdaHashingVersion: "20201221",
   },

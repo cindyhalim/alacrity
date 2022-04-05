@@ -4,44 +4,25 @@ import { CardSymbol, IPlayingCard, IWildCard } from "alacrity-shared"
 export const TOTAL_PLAYING_CARDS = 92
 export const TOTAL_WILD_CARDS = 8
 
-export const generateUniqueRandomFromList = ({
-  min = 0,
-  max,
-  list,
-}: {
-  min?: number
-  max: number
-  list: string[]
-}) => {
-  const set: Set<string> = new Set()
-  const listSize = list.length
-  let safeMax = max
-
-  if (safeMax > listSize) {
-    safeMax = listSize
-  }
-
-  while (set.size !== safeMax) {
-    const random = Math.floor(Math.random() * (safeMax - min + 1)) + min
-    if (!set.has(list[random])) {
-      set.add(list[random])
-    }
-  }
-
-  return Array.from(set)
-}
-
 export const shuffle = (list: any[]) =>
   list
     .map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value)
 
-export const getCardPile = ({
+export const generateUniqueRandomFromList = ({ max, list }: { max: number; list: string[] }) => {
+  const set: Set<string> = new Set(list)
+  const unshuffledListFromSet = Array.from(set)
+  const shuffled = shuffle(unshuffledListFromSet).slice(0, max)
+
+  return shuffled
+}
+
+export const getDrawPile = ({
   cardsData,
 }: {
   cardsData: CardsDataJSON
-}): { drawPile: IPlayingCard[]; wildCardPile: IWildCard[] } => {
+}): (IPlayingCard | IWildCard)[] => {
   const difficulties = Object.keys(cardsData)
   const TOTAL_CARDS_PER_DIFFICULTY = TOTAL_PLAYING_CARDS / difficulties.length
   const TOTAL_CARDS_PER_SYMBOL = Math.ceil(TOTAL_PLAYING_CARDS / TOTAL_WILD_CARDS)
@@ -69,22 +50,29 @@ export const getCardPile = ({
     return [...prev, ...currentCards]
   }, [])
 
-  const drawPile = shuffle(unshuffledDrawPile)
-
   const shuffledSymbolA = shuffle(symbols)
   let shuffledSymbolB = shuffle(symbols)
 
   const wildCardPile = []
+  const symbolSet = new Set()
 
   while (wildCardPile.length < TOTAL_WILD_CARDS) {
-    const symbolA = shuffledSymbolA.pop()
     const symbolB = shuffledSymbolB.pop()
+    const symbolA = shuffledSymbolA.pop()
+    const chosenSymbols = [symbolA, symbolB]
+    const flippedChosenSymbols = [symbolB, symbolA]
 
-    if (symbolA !== symbolB) {
+    if (
+      symbolA !== symbolB &&
+      !symbolSet.has(JSON.stringify(chosenSymbols)) &&
+      !symbolSet.has(JSON.stringify(flippedChosenSymbols))
+    ) {
       wildCardPile.push({
         type: "wildCard" as const,
-        symbols: [symbolA, symbolB],
+        symbols: chosenSymbols,
       })
+      symbolSet.add(JSON.stringify(chosenSymbols))
+      symbolSet.add(JSON.stringify(flippedChosenSymbols))
     } else {
       shuffledSymbolB.push(symbolB)
       shuffledSymbolA.push(symbolA)
@@ -92,5 +80,6 @@ export const getCardPile = ({
     }
   }
 
-  return { drawPile, wildCardPile }
+  const drawPile = shuffle([...unshuffledDrawPile, ...wildCardPile])
+  return drawPile
 }
