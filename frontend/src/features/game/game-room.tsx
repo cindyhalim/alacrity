@@ -42,38 +42,13 @@ export const GameRoom: React.FC = () => {
           <PlayerBlock
             key={opponentPlayer.id}
             player={opponentPlayer}
-            isMe={false}
-            hasCurrentTurn={currentPlayerId === opponentPlayer.id}
+            isOpponent
+            isCurrentPlayerTurn={currentPlayerId === opponentPlayer.id}
           />
         ))}
       </Flex>
-
-      <Flex sx={{ justifyContent: "center", alignItems: "center", marginTop: 87 }}>
-        <Flex
-          sx={{
-            flexDirection: "column",
-            minWidth: 167,
-            maxHeight: 110,
-            marginRight: 46,
-          }}
-        >
-          {isCurrentPlayerTurn && (
-            <>
-              <Text
-                sx={{
-                  fontFamily: theme.fonts.antonio,
-                  fontSize: 35,
-                  textAlign: "center",
-                  marginBottom: "7px",
-                  color: theme.colors.red,
-                }}
-              >
-                YOUR TURN!
-              </Text>
-              <Button type={"game"}>DRAW CARD</Button>
-            </>
-          )}
-        </Flex>
+      <Flex sx={{ justifyContent: "center", alignItems: "center", margin: 87 }}>
+        <CurrentTurnButton isCurrentPlayerTurn={isCurrentPlayerTurn} />
         <Card
           text={"DRAW PILE"}
           symbol={CardSymbol.DIAMOND}
@@ -83,7 +58,35 @@ export const GameRoom: React.FC = () => {
         />
         <CardEmptyState size={"medium"} />
       </Flex>
-      <PlayerBlock player={player} isMe={true} hasCurrentTurn={isCurrentPlayerTurn} />
+      <PlayerBlock player={player} isCurrentPlayerTurn={isCurrentPlayerTurn} />
     </Box>
   )
 }
+
+const CurrentTurnButton: React.FC<{ isCurrentPlayerTurn: boolean }> = ({ isCurrentPlayerTurn }) => (
+  <Flex
+    sx={{
+      flexDirection: "column",
+      minWidth: 167,
+      maxHeight: 110,
+      marginRight: 46,
+    }}
+  >
+    {isCurrentPlayerTurn && (
+      <>
+        <Text
+          sx={{
+            fontFamily: theme.fonts.antonio,
+            fontSize: 35,
+            textAlign: "center",
+            marginBottom: "7px",
+            color: theme.colors.red,
+          }}
+        >
+          YOUR TURN!
+        </Text>
+        <Button type={"game"}>DRAW CARD</Button>
+      </>
+    )}
+  </Flex>
+)

@@ -20,6 +20,7 @@ export const WaitingRoom: React.FC = () => {
       roomId,
     })
   }
+
   return (
     <BaseTitleScreen>
       <Text
