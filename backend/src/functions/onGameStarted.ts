@@ -11,8 +11,6 @@ export const handler = async (event: APIGatewayEvent) => {
     requestContext: { routeKey },
   } = event
 
-  throw Error()
-
   const { roomId }: IGameStartedEvent = JSON.parse(event.body)
 
   console.log("onGameStarted: recieved route key:", routeKey)
