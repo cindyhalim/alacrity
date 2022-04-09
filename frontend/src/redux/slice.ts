@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { IPlayer, IGame } from "alacrity-shared"
 
 export type TRoomStatus = "ready" | "not_found" | "admin_disconnected"
-export type TStartNewGameStatus = "ready" | "loading" | "error"
+export type TStartNewGameStatus = "ready" | "loading"
 export interface IState {
   playerId: string
   playerPool: IPlayer[]
@@ -10,6 +10,7 @@ export interface IState {
   currentGame: IGame | null
   roomId: string
   roomStatus: TRoomStatus
+  showErrorToast: boolean
 }
 
 const initialState: IState = {
@@ -19,12 +20,17 @@ const initialState: IState = {
   roomId: "",
   roomStatus: "ready",
   startNewGameStatus: "ready",
+  showErrorToast: false,
 }
 
 export const { actions, reducer } = createSlice({
   name: "alacrity",
   initialState,
   reducers: {
+    setShowErrorToast: (state, action: PayloadAction<boolean>) => ({
+      ...state,
+      showErrorToast: action.payload,
+    }),
     setStartNewGameStatus: (state, action: PayloadAction<TStartNewGameStatus>) => ({
       ...state,
       startNewGameStatus: action.payload,

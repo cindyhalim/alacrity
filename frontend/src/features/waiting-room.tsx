@@ -19,15 +19,11 @@ export const WaitingRoom: React.FC = () => {
   const dispatch = useDispatch()
 
   const handleOnStartNewGameClick = () => {
-    try {
-      dispatch(actions.setStartNewGameStatus("loading"))
-      sendMessage({
-        action: FrontendWebsocketActions.GameStarted,
-        roomId,
-      })
-    } catch {
-      dispatch(actions.setStartNewGameStatus("error"))
-    }
+    dispatch(actions.setStartNewGameStatus("loading"))
+    sendMessage({
+      action: FrontendWebsocketActions.GameStarted,
+      roomId,
+    })
   }
 
   return (
