@@ -15,6 +15,7 @@ export const WaitingRoom: React.FC = () => {
   const roomId = useAppSelector((state) => state.roomId)
   const playerId = useAppSelector((state) => state.playerId)
   const { sendMessage } = useWSContext()
+  const startGameStatus = useAppSelector((state) => state.startNewGameStatus)
   const dispatch = useDispatch()
 
   const handleOnStartNewGameClick = () => {
@@ -30,7 +31,7 @@ export const WaitingRoom: React.FC = () => {
   }
 
   return (
-    <BaseTitleScreen>
+    <BaseTitleScreen sx={{ justifyContent: "space-evenly" }}>
       <Text
         sx={{
           fontFamily: theme.fonts.antonio,
@@ -40,7 +41,7 @@ export const WaitingRoom: React.FC = () => {
       >
         PLAYERS
       </Text>
-      <Flex sx={{ flexWrap: "wrap" }}>
+      <Flex sx={{ flexWrap: "wrap", justifyContent: "center" }}>
         {players.map((player, idx) => (
           <Button
             active={player.id === playerId}
@@ -51,17 +52,18 @@ export const WaitingRoom: React.FC = () => {
           </Button>
         ))}
       </Flex>
+
       {getIsAdmin() && (
         <Flex sx={{ marginTop: 60, width: "100%" }}>
           <Button
             onClick={() => navigator.clipboard.writeText(window.location.href + roomId)}
-            sx={{ flex: 1 }}
+            sx={{ flex: 1, fontSize: 20 }}
           >
             COPY LINK
           </Button>
           <Button
-            disabled={players.length === 1 || players.length > 4}
-            sx={{ flex: 1, marginLeft: 20 }}
+            disabled={players.length === 1 || players.length > 6 || startGameStatus === "loading"}
+            sx={{ flex: 1, marginLeft: 20, fontSize: 20 }}
             onClick={handleOnStartNewGameClick}
           >
             START NEW GAME

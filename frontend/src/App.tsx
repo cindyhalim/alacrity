@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux"
 import { actions } from "./redux/slice"
 
 export const App: React.FC = () => {
-  const startNewGameStatus = useAppSelector((state) => state?.startNewGameStatus)
   const gameStatus = useAppSelector((state) => state?.currentGame?.status)
   const roomStatus = useAppSelector((state) => state.roomStatus)
   const playerId = useAppSelector((state) => state.playerId)
@@ -20,16 +19,12 @@ export const App: React.FC = () => {
     }
   }, [gameStatus, dispatch])
 
-  if (roomStatus !== "ready" || startNewGameStatus === "error") {
+  if (roomStatus !== "ready") {
     return <ErrorScreen />
   }
 
   if (!playerId) {
     return <LoadingTitleScreen />
-  }
-
-  if (startNewGameStatus === "loading") {
-    return <LoadingTitleScreen text={"Creating game..."} />
   }
 
   return gameStatus !== "started" ? <WaitingRoom /> : <GameRoom />
