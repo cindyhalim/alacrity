@@ -6,8 +6,9 @@ import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
 import { Card } from "../../components/card"
 import { PlayerBlock } from "./player-block"
-import { CardSymbol } from "alacrity-shared"
+import { CardSymbol, FrontendWebsocketActions } from "alacrity-shared"
 import { Button } from "src/components"
+import { useWSContext } from "src/utils/websocket-context"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
@@ -18,6 +19,19 @@ export const GameRoom: React.FC = () => {
   const player = players.find((player) => player.id === playerId)
 
   const isCurrentPlayerTurn = currentPlayerId === player?.id
+
+  const { sendMessage } = useWSContext()
+  const roomId = useAppSelector((state) => state.roomId)
+  const totalDrawCardsRemaining = useAppSelector(
+    (state) => state.currentGame?.totalDrawCardsRemaining,
+  )
+
+  if (!totalDrawCardsRemaining) {
+    sendMessage({
+      action: FrontendWebsocketActions.GameEnded,
+      roomId,
+    })
+  }
 
   return (
     <Box
