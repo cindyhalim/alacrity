@@ -116,6 +116,7 @@ export interface ICardDrawnEvent {
 
 export interface ICardWonEvent {
   action: FrontendWebsocketActions.CardWon
+  roomId: string
   loserPlayerId: string
 }
 
