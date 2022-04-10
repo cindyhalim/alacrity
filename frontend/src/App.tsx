@@ -5,7 +5,7 @@ import { LoadingTitleScreen } from "./components/loading-title-screen"
 import { ErrorScreen } from "./features/error/error-screen"
 
 export const App: React.FC = () => {
-  const gameStatus = useAppSelector((state) => state?.currentGame?.status)
+  const currentGame = useAppSelector((state) => state?.currentGame)
   const roomStatus = useAppSelector((state) => state.roomStatus)
   const playerId = useAppSelector((state) => state.playerId)
 
@@ -16,5 +16,6 @@ export const App: React.FC = () => {
   if (!playerId) {
     return <LoadingTitleScreen />
   }
-  return gameStatus !== "started" ? <WaitingRoom /> : <GameRoom />
+
+  return !currentGame ? <WaitingRoom /> : <GameRoom />
 }
