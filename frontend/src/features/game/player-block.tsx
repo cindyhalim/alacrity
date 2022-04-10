@@ -28,7 +28,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlay
     isCurrentPlayerTurn,
   }
 
-  const handleCardClick = ({
+  const handleCardWon = ({
     playerCard,
     mainPlayer,
     wildCard,
@@ -59,7 +59,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlay
   return isOpponent ? (
     <PlayerCard
       {...sharedProps}
-      onClick={() => handleCardClick({ playerCard, mainPlayer, wildCard })}
+      onClick={() => handleCardWon({ playerCard, mainPlayer, wildCard })}
     />
   ) : (
     <Flex
