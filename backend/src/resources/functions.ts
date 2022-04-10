@@ -59,15 +59,16 @@ export const functions: Serverless["functions"] = {
   //     },
   //   ],
   // },
-  // onGameEnded: {
-  //   events: [
-  //     {
-  //       websocket: {
-  //         route: FrontendWebsocketActions.GameEnded,
-  //       },
-  //     },
-  //   ],
-  // },
+  onGameEnded: {
+    handler: `src/functions/onGameEnded.handler`,
+    events: [
+      {
+        websocket: {
+          route: "game_ended",
+        },
+      },
+    ],
+  },
   onDisconnect: {
     handler: `src/functions/onDisconnect.handler`,
     events: [
