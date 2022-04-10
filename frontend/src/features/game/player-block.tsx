@@ -15,6 +15,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlay
   const mainPlayer = useGetMainPlayer()
   const { sendMessage } = useWSContext()
   const wildCard = useAppSelector((state) => state.currentGame?.wildCard)
+  const roomId = useAppSelector((state) => state.roomId)
 
   const playPile = player.playPile
   const playerCard = playPile?.[playPile.length - 1] || null
@@ -51,6 +52,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlay
     if (mainPlayerCard?.symbol === playerCard.symbol || matchesWildCard) {
       sendMessage({
         action: FrontendWebsocketActions.CardWon,
+        roomId,
         loserPlayerId: player.id,
       })
     }
