@@ -72,7 +72,7 @@ const updateGame = async ({ roomId, game }: { roomId: string; game: IGameModel }
         },
         UpdateExpression: "set game = :game",
         ExpressionAttributeValues: {
-          game,
+          ":game": game,
         },
       })
       .promise()
