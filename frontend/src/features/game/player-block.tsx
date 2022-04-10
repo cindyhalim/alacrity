@@ -1,30 +1,31 @@
 import { IGamePlayer } from "alacrity-shared"
 import React from "react"
 import { Flex } from "rebass"
-import { PlayerCard } from "src/components/player-card"
+import { PlayerCard, IPlayerCardProps } from "src/components"
+import { useGetMainPlayer } from "src/utils/helpers"
 
 interface IPlayerBlockProps {
-  player?: IGamePlayer
+  player: IGamePlayer
   isCurrentPlayerTurn: boolean
-  isOpponent?: boolean
 }
 
-export const PlayerBlock: React.FC<IPlayerBlockProps> = ({
-  player,
-  isOpponent,
-  isCurrentPlayerTurn,
-}) => {
-  const playPile = player?.playPile
-  const card = playPile ? playPile[playPile.length - 1] : null
-  const playerName = player?.name || ""
+export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlayerTurn }) => {
+  const mainPlayer = useGetMainPlayer()
+
+  const playPile = player.playPile
+  const playerCard = playPile?.[playPile.length - 1] || null
+
+  const isOpponent = !(player?.id === mainPlayer?.id)
+
+  const sharedProps: IPlayerCardProps = {
+    card: playerCard,
+    playerName: player.name,
+    isOpponent,
+    isCurrentPlayerTurn,
+  }
 
   return isOpponent ? (
-    <PlayerCard
-      card={card}
-      playerName={playerName}
-      isCurrentPlayerTurn={isCurrentPlayerTurn}
-      isOpponent
-    />
+    <PlayerCard {...sharedProps} />
   ) : (
     <Flex
       sx={{
@@ -34,7 +35,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({
         justifyContent: "center",
       }}
     >
-      <PlayerCard card={card} playerName={playerName} isCurrentPlayerTurn={isCurrentPlayerTurn} />
+      <PlayerCard {...sharedProps} />
     </Flex>
   )
 }

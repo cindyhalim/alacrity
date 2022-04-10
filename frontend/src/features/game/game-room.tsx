@@ -1,23 +1,19 @@
 import React from "react"
 import { Box, Flex, Text } from "rebass"
-import { CardEmptyState } from "src/components/card-empty-state"
 
+import { CardEmptyState, Card, Button } from "src/components"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
-import { Card } from "../../components/card"
+import { useGetMainPlayer } from "src/utils/helpers"
 import { PlayerBlock } from "./player-block"
 import { CardSymbol } from "alacrity-shared"
-import { Button } from "src/components"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
   const currentPlayerId = useAppSelector((state) => state.currentGame?.currentPlayerId)
-  const playerId = useAppSelector((state) => state.playerId)
+  const mainPlayer = useGetMainPlayer()
 
-  const opponentPlayers = players.filter((player) => player.id !== playerId)
-  const player = players.find((player) => player.id === playerId)
-
-  const isCurrentPlayerTurn = currentPlayerId === player?.id
+  const isCurrentPlayerTurn = currentPlayerId === mainPlayer?.id
 
   return (
     <Box
@@ -38,12 +34,11 @@ export const GameRoom: React.FC = () => {
           minHeight: theme.styles.smallCard.containerCard.height,
         }}
       >
-        {opponentPlayers.map((opponentPlayer) => (
+        {players.map((player) => (
           <PlayerBlock
-            key={opponentPlayer.id}
-            player={opponentPlayer}
-            isOpponent
-            isCurrentPlayerTurn={currentPlayerId === opponentPlayer.id}
+            key={player.id}
+            player={player}
+            isCurrentPlayerTurn={currentPlayerId === player.id}
           />
         ))}
       </Flex>
@@ -58,7 +53,6 @@ export const GameRoom: React.FC = () => {
         />
         <CardEmptyState size={"medium"} />
       </Flex>
-      <PlayerBlock player={player} isCurrentPlayerTurn={isCurrentPlayerTurn} />
     </Box>
   )
 }

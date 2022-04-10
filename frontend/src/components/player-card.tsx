@@ -6,11 +6,12 @@ import { theme } from "../theme"
 import { Card } from "./card"
 import { CardEmptyState } from "./card-empty-state"
 
-interface IPlayerCardProps {
+export interface IPlayerCardProps {
   card: IPlayingCard | null
   playerName: string
   isCurrentPlayerTurn: boolean
   isOpponent?: boolean
+  onClick?: () => void
 }
 
 export const PlayerCard: React.FC<IPlayerCardProps> = ({
@@ -18,10 +19,11 @@ export const PlayerCard: React.FC<IPlayerCardProps> = ({
   card,
   isCurrentPlayerTurn,
   isOpponent = false,
+  onClick,
 }) => {
   const cardSize: TCardSize = isOpponent ? "small" : "large"
   return (
-    <Flex flexDirection={"column"}>
+    <Flex flexDirection={"column"} onClick={onClick}>
       <Text
         sx={{
           fontFamily: theme.fonts.antonio,
