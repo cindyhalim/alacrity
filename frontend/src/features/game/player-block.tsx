@@ -3,7 +3,7 @@ import React from "react"
 import { Flex } from "rebass"
 import { PlayerCard, IPlayerCardProps } from "src/components"
 import { useAppSelector } from "src/redux/utils"
-import { useGetMainPlayer } from "src/utils/helpers"
+import { useMainPlayer } from "src/utils/helpers"
 import { useWSContext } from "src/utils/websocket-context"
 
 interface IPlayerBlockProps {
@@ -12,7 +12,7 @@ interface IPlayerBlockProps {
 }
 
 export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlayerTurn }) => {
-  const mainPlayer = useGetMainPlayer()
+  const mainPlayer = useMainPlayer()
   const { sendMessage } = useWSContext()
   const wildCard = useAppSelector((state) => state.currentGame?.wildCard)
   const roomId = useAppSelector((state) => state.roomId)
@@ -20,7 +20,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlay
   const playPile = player.playPile
   const playerCard = playPile?.[playPile.length - 1] || null
 
-  const isOpponent = !(player?.id === mainPlayer?.id)
+  const isOpponent = player?.id !== mainPlayer?.id
 
   const sharedProps: IPlayerCardProps = {
     card: playerCard,
