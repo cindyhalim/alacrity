@@ -17,13 +17,13 @@ export const theme = {
       containerCard: { width: 242, height: 327 },
       innerCard: { width: 228, height: 307, borderRadius: 15 },
       symbol: { width: 75, height: 75, marginY: 50 },
-      fontSize: { back: 45, front: 45 },
+      fontSize: { back: 35, front: 35 },
     },
     mediumCard: {
       containerCard: { width: 180, height: 245 },
       innerCard: { width: 165, height: 230, borderRadius: 10 },
       symbol: { width: 30, height: 30, marginY: 30 },
-      fontSize: { back: 34, front: 34 },
+      fontSize: { back: 30, front: 30 },
     },
     smallCard: {
       containerCard: { width: 140, height: 185 },
