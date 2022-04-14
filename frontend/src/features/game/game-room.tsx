@@ -4,14 +4,14 @@ import { Box, Flex, Text } from "rebass"
 import { CardEmptyState, Card, Button } from "src/components"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
-import { useGetMainPlayer } from "src/utils/helpers"
+import { useMainPlayer } from "src/utils/helpers"
 import { PlayerBlock } from "./player-block"
 import { CardSymbol } from "alacrity-shared"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
   const currentPlayerId = useAppSelector((state) => state.currentGame?.currentPlayerId)
-  const mainPlayer = useGetMainPlayer()
+  const mainPlayer = useMainPlayer()
 
   const isCurrentPlayerTurn = currentPlayerId === mainPlayer?.id
 
