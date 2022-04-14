@@ -1,10 +1,10 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Box, Flex, Text } from "rebass"
 
 import { CardEmptyState, Card, Button } from "src/components"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
-import { useMainPlayer } from "src/utils/helpers"
+import { getIsAdmin, useMainPlayer } from "src/utils/helpers"
 import { PlayerBlock } from "./player-block"
 import { CardSymbol, FrontendWebsocketActions } from "alacrity-shared"
 import { useWSContext } from "src/utils/websocket-context"
@@ -22,12 +22,14 @@ export const GameRoom: React.FC = () => {
     (state) => state.currentGame?.totalDrawCardsRemaining,
   )
 
-  if (!totalDrawCardsRemaining) {
-    sendMessage({
-      action: FrontendWebsocketActions.GameEnded,
-      roomId,
-    })
-  }
+  useEffect(() => {
+    if (getIsAdmin() && !totalDrawCardsRemaining) {
+      sendMessage({
+        action: FrontendWebsocketActions.GameEnded,
+        roomId,
+      })
+    }
+  }, [roomId, totalDrawCardsRemaining, sendMessage])
 
   return (
     <Box
