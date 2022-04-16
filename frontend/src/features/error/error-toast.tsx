@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion"
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { useDispatch } from "react-redux"
 import { Box, Flex, Text } from "rebass"
 import { actions } from "src/redux/slice"
@@ -16,7 +16,7 @@ export const ErrorToast: React.FC = () => {
     }, 3000)
 
     return () => clearTimeout(timeout)
-  }, [])
+  }, [dispatch])
 
   return (
     <Box
