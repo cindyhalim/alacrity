@@ -48,7 +48,7 @@ export const WSContextProvider: React.FC = ({ children }) => {
       ws.current.onmessage = (message) => {
         const data: TBackendWebsocketEvent = JSON.parse(message.data)
         const errorData: TWebsocketErrorEvent = JSON.parse(message.data)
-        console.log("data", data)
+        console.log("receieved message:", data)
 
         if (errorData?.message) {
           dispatch(actions.setShowErrorToast(true))
@@ -104,7 +104,10 @@ export const WSContextProvider: React.FC = ({ children }) => {
   return (
     <WSContext.Provider
       value={{
-        sendMessage: (event: TFrontendWebsocketEvent) => ws.current?.send(JSON.stringify(event)),
+        sendMessage: (event: TFrontendWebsocketEvent) => {
+          console.log("sending message:", event)
+          ws.current?.send(JSON.stringify(event))
+        },
       }}
     >
       {children}
