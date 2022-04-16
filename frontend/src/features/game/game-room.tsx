@@ -68,11 +68,15 @@ export const GameRoom: React.FC = () => {
           side={"back"}
           containerSx={{ marginRight: 32 }}
         />
-        {wildCard ? <WildCard symbols={wildCard.symbols} /> : <CardEmptyState size={"medium"} />}
+        <Flex sx={{ minWidth: CURRENT_TURN_WIDTH }}>
+          {wildCard ? <WildCard symbols={wildCard.symbols} /> : <CardEmptyState size={"medium"} />}
+        </Flex>
       </Flex>
     </Box>
   )
 }
+
+const CURRENT_TURN_WIDTH = 167
 
 const CurrentTurnButton: React.FC<{ isCurrentPlayerTurn: boolean }> = ({ isCurrentPlayerTurn }) => {
   const roomId = useAppSelector((state) => state.roomId)
@@ -81,9 +85,9 @@ const CurrentTurnButton: React.FC<{ isCurrentPlayerTurn: boolean }> = ({ isCurre
     <Flex
       sx={{
         flexDirection: "column",
-        minWidth: 167,
+        minWidth: CURRENT_TURN_WIDTH,
         maxHeight: 110,
-        marginRight: 46,
+        marginRight: 32,
       }}
     >
       {isCurrentPlayerTurn && (
