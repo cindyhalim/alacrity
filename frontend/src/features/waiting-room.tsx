@@ -7,14 +7,19 @@ import { BaseTitleScreen } from "src/components/base-title-screen"
 import { getIsAdmin } from "src/utils/helpers"
 import { useWSContext } from "src/utils/websocket-context"
 import { FrontendWebsocketActions } from "alacrity-shared"
+import { useDispatch } from "react-redux"
+import { actions } from "src/redux/slice"
 
 export const WaitingRoom: React.FC = () => {
   const players = useAppSelector((state) => state.playerPool)
   const roomId = useAppSelector((state) => state.roomId)
   const playerId = useAppSelector((state) => state.playerId)
   const { sendMessage } = useWSContext()
+  const isGameLoading = useAppSelector((state) => state.isGameLoading)
+  const dispatch = useDispatch()
 
   const handleOnStartNewGameClick = () => {
+    dispatch(actions.setIsGameLoading(true))
     sendMessage({
       action: FrontendWebsocketActions.GameStarted,
       roomId,
@@ -22,28 +27,26 @@ export const WaitingRoom: React.FC = () => {
   }
 
   return (
-    <BaseTitleScreen sx={{ justifyContent: "space-between" }}>
-      <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
-        <Text
-          sx={{
-            fontFamily: theme.fonts.antonio,
-            fontSize: 28,
-            marginBottom: 20,
-          }}
-        >
-          PLAYERS
-        </Text>
-        <Flex sx={{ flexWrap: "wrap", justifyContent: "center" }}>
-          {players.map((player, idx) => (
-            <Button
-              active={player.id === playerId}
-              key={idx}
-              sx={{ marginLeft: idx === 0 ? 0 : 20, marginBottom: 20 }}
-            >
-              {player.name.toUpperCase()}
-            </Button>
-          ))}
-        </Flex>
+    <BaseTitleScreen sx={{ justifyContent: "space-evenly" }}>
+      <Text
+        sx={{
+          fontFamily: theme.fonts.antonio,
+          fontSize: 28,
+          marginBottom: 20,
+        }}
+      >
+        PLAYERS
+      </Text>
+      <Flex sx={{ flexWrap: "wrap", justifyContent: "center" }}>
+        {players.map((player, idx) => (
+          <Button
+            active={player.id === playerId}
+            key={idx}
+            sx={{ marginLeft: idx === 0 ? 0 : 20, marginBottom: 20 }}
+          >
+            {player.name.toUpperCase()}
+          </Button>
+        ))}
       </Flex>
 
       {getIsAdmin() && (
@@ -55,7 +58,7 @@ export const WaitingRoom: React.FC = () => {
             COPY LINK
           </Button>
           <Button
-            disabled={players.length === 1 || players.length > 4}
+            disabled={players.length === 1 || players.length > 6 || isGameLoading}
             sx={{ flex: 1, marginLeft: 20, fontSize: 20 }}
             onClick={handleOnStartNewGameClick}
           >
