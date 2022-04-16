@@ -68,7 +68,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlay
       sx={{
         width: "100%",
         position: "absolute",
-        bottom: -20,
+        bottom: -80,
         justifyContent: "center",
       }}
     >

@@ -78,6 +78,7 @@ export const Card: React.FC<ICardProps> = ({
         filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
         justifyContent: "center",
         alignItems: "center",
+        cursor: "pointer",
         border: `2px solid ${side === "front" ? theme.colors.white : color}`,
         ...containerCardStyles,
         ...containerSx,
