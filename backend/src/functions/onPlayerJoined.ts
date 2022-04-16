@@ -1,5 +1,5 @@
 import { database, ws } from "@services"
-import { getPlayers, getSerializedPlayerPool } from "@utils"
+import { getGame, getPlayers, getSerializedCurrentGame, getSerializedPlayerPool } from "@utils"
 
 import {
   BackendWebsocketActions,
@@ -7,6 +7,7 @@ import {
   IRoomNotFoundEvent,
   IPlayerIdSetEvent,
   IPlayerPoolUpdatedEvent,
+  IGameUpdatedEvent,
 } from "alacrity-shared"
 import { APIGatewayEvent } from "aws-lambda"
 
@@ -20,6 +21,7 @@ export const handler = async (event: APIGatewayEvent) => {
   console.log("onAdminJoined: recieved route key:", routeKey)
 
   const room = await database.room.get({ roomId })
+
   const currentPlayers = getPlayers(room)
 
   if (!currentPlayers.some((player) => player.isAdmin)) {
@@ -67,6 +69,20 @@ export const handler = async (event: APIGatewayEvent) => {
 
   console.log("Sending event:", BackendWebsocketActions.PlayerPoolUpdated)
   await Promise.all(playerPoolUpdatedEvents)
+
+  console.log("checking if there is a current game")
+  const currentGame = getGame(room)
+
+  if (currentGame && currentGame.status === "started") {
+    console.log("game in progress found!")
+    ws.sendMessage<IGameUpdatedEvent>({
+      connectionId,
+      body: {
+        action: BackendWebsocketActions.GameUpdated,
+        currentGame: getSerializedCurrentGame({ game: currentGame }),
+      },
+    })
+  }
 
   return { statusCode: 200 }
 }
