@@ -24,7 +24,7 @@ export const handler = async (event: APIGatewayEvent) => {
   const room = await database.room.get({ roomId })
   const game = getGame(room)
 
-  if (game?.status === "ended") {
+  if (game) {
     await database.room.deleteGame({ roomId, gameId: game.id })
   }
 
