@@ -48,6 +48,7 @@ export const Button: React.FC<IButtonProps> = (props) => {
     <RButton
       {...props}
       sx={{
+        zIndex: 100,
         fontFamily: theme.fonts.antonio,
         paddingX: 28,
         paddingY: 10,

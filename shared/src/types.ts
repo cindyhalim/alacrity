@@ -124,6 +124,7 @@ export interface IGameStartedEvent {
 
 export interface ICardDrawnEvent {
   action: FrontendWebsocketActions.CardDrawn
+  roomId: string
 }
 
 export interface ICardWonEvent {

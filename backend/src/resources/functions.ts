@@ -41,15 +41,16 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
-  // onCardDrawn: {
-  //   events: [
-  //     {
-  //       websocket: {
-  //         route: FrontendWebsocketActions.CardDrawn,
-  //       },
-  //     },
-  //   ],
-  // },
+  onCardDrawn: {
+    handler: `src/functions/onCardDrawn.handler`,
+    events: [
+      {
+        websocket: {
+          route: "card_drawn",
+        },
+      },
+    ],
+  },
   onCardWon: {
     handler: `src/functions/onCardWon.handler`,
     events: [

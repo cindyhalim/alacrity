@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { Box, Flex, Text } from "rebass"
 
-import { CardEmptyState, Card, Button } from "src/components"
+import { CardEmptyState, Card, Button, WildCard } from "src/components"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
 import { getIsAdmin, useMainPlayer } from "src/utils/helpers"
@@ -16,6 +16,7 @@ export const GameRoom: React.FC = () => {
 
   const isCurrentPlayerTurn = currentPlayerId === mainPlayer?.id
 
+  const wildCard = useAppSelector((state) => state.currentGame?.wildCard)
   const { sendMessage } = useWSContext()
   const roomId = useAppSelector((state) => state.roomId)
   const totalDrawCardsRemaining = useAppSelector(
@@ -67,36 +68,45 @@ export const GameRoom: React.FC = () => {
           side={"back"}
           containerSx={{ marginRight: 32 }}
         />
-        <CardEmptyState size={"medium"} />
+        {wildCard ? <WildCard symbols={wildCard.symbols} /> : <CardEmptyState size={"medium"} />}
       </Flex>
     </Box>
   )
 }
 
-const CurrentTurnButton: React.FC<{ isCurrentPlayerTurn: boolean }> = ({ isCurrentPlayerTurn }) => (
-  <Flex
-    sx={{
-      flexDirection: "column",
-      minWidth: 167,
-      maxHeight: 110,
-      marginRight: 46,
-    }}
-  >
-    {isCurrentPlayerTurn && (
-      <>
-        <Text
-          sx={{
-            fontFamily: theme.fonts.antonio,
-            fontSize: 35,
-            textAlign: "center",
-            marginBottom: "7px",
-            color: theme.colors.red,
-          }}
-        >
-          YOUR TURN!
-        </Text>
-        <Button type={"game"}>DRAW CARD</Button>
-      </>
-    )}
-  </Flex>
-)
+const CurrentTurnButton: React.FC<{ isCurrentPlayerTurn: boolean }> = ({ isCurrentPlayerTurn }) => {
+  const roomId = useAppSelector((state) => state.roomId)
+  const { sendMessage } = useWSContext()
+  return (
+    <Flex
+      sx={{
+        flexDirection: "column",
+        minWidth: 167,
+        maxHeight: 110,
+        marginRight: 46,
+      }}
+    >
+      {isCurrentPlayerTurn && (
+        <>
+          <Text
+            sx={{
+              fontFamily: theme.fonts.antonio,
+              fontSize: 35,
+              textAlign: "center",
+              marginBottom: "7px",
+              color: theme.colors.red,
+            }}
+          >
+            YOUR TURN!
+          </Text>
+          <Button
+            onClick={() => sendMessage({ action: FrontendWebsocketActions.CardDrawn, roomId })}
+            type={"game"}
+          >
+            DRAW CARD
+          </Button>
+        </>
+      )}
+    </Flex>
+  )
+}
