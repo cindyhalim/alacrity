@@ -37,7 +37,12 @@ export interface IGame {
   totalDrawCardsRemaining: number
   wildCard: IWildCard
   currentPlayerId: string
-  status: "started" | "ended"
+}
+
+export interface IPlayerScoreInfo {
+  id: string
+  name: string
+  score: number
 }
 
 // Websockets
@@ -49,6 +54,7 @@ export enum BackendWebsocketActions {
   RoomNotFound = "room_not_found",
   AdminDisconnected = "admin_disconnected",
   AddPlayerFailed = "add_player_failed",
+  GameScoreUpdated = "game_score_updated",
 }
 
 export enum FrontendWebsocketActions {
@@ -84,12 +90,18 @@ export interface IGameUpdatedEvent {
   currentGame: IGame | null
 }
 
+export interface IGameScoreUpdatedEvent {
+  action: BackendWebsocketActions.GameScoreUpdated
+  scores: IPlayerScoreInfo[]
+}
+
 export type TBackendWebsocketEvent =
   | IPlayerIdSetEvent
   | IPlayerPoolUpdatedEvent
   | IGameUpdatedEvent
   | IAdminDisconnectedEvent
   | IRoomNotFoundEvent
+  | IGameScoreUpdatedEvent
 
 // Frontend events
 
@@ -122,6 +134,7 @@ export interface ICardWonEvent {
 
 export interface IGameEndedEvent {
   action: FrontendWebsocketActions.GameEnded
+  roomId: string
 }
 
 export type TFrontendWebsocketEvent =
@@ -131,4 +144,3 @@ export type TFrontendWebsocketEvent =
   | ICardDrawnEvent
   | ICardWonEvent
   | IGameEndedEvent
-  | IGameStartedEvent

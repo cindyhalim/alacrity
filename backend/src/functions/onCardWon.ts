@@ -51,15 +51,15 @@ export const handler = async (event: APIGatewayEvent) => {
 
   console.log("sending event", BackendWebsocketActions.GameUpdated)
   await Promise.all(
-    updatedPlayers.map((player) => {
+    updatedPlayers.map((player) =>
       ws.sendMessage<IGameUpdatedEvent>({
         connectionId: player.id,
         body: {
           action: BackendWebsocketActions.GameUpdated,
           currentGame: serializedUpdatedGame,
         },
-      })
-    }),
+      }),
+    ),
   )
 
   return { statusCode: 200 }
