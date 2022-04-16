@@ -59,6 +59,9 @@ export const WSContextProvider: React.FC = ({ children }) => {
           case BackendWebsocketActions.AdminDisconnected:
             dispatch(actions.setRoomStatus("admin_disconnected"))
             break
+          case BackendWebsocketActions.GameScoreUpdated:
+            dispatch(actions.setGameScore(data.scores))
+            break
         }
       }
 
