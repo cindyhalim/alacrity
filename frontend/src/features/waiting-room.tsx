@@ -15,11 +15,11 @@ export const WaitingRoom: React.FC = () => {
   const roomId = useAppSelector((state) => state.roomId)
   const playerId = useAppSelector((state) => state.playerId)
   const { sendMessage } = useWSContext()
-  const startGameStatus = useAppSelector((state) => state.startNewGameStatus)
+  const isGameLoading = useAppSelector((state) => state.isGameLoading)
   const dispatch = useDispatch()
 
   const handleOnStartNewGameClick = () => {
-    dispatch(actions.setStartNewGameStatus("loading"))
+    dispatch(actions.setIsGameLoading(true))
     sendMessage({
       action: FrontendWebsocketActions.GameStarted,
       roomId,
@@ -58,7 +58,7 @@ export const WaitingRoom: React.FC = () => {
             COPY LINK
           </Button>
           <Button
-            disabled={players.length === 1 || players.length > 6 || startGameStatus === "loading"}
+            disabled={players.length === 1 || players.length > 6 || isGameLoading}
             sx={{ flex: 1, marginLeft: 20, fontSize: 20 }}
             onClick={handleOnStartNewGameClick}
           >

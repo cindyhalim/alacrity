@@ -2,13 +2,9 @@ import React, { useEffect, useRef } from "react"
 import { BaseTitleScreen } from "./base-title-screen"
 import loadingAnimation from "../assets/loading.json"
 import lottie, { AnimationItem } from "lottie-web"
-import { Box, Text } from "rebass"
+import { Box } from "rebass"
 
-interface ILoadingTitleScreenProps {
-  text?: string
-}
-
-export const LoadingTitleScreen: React.FC<ILoadingTitleScreenProps> = ({ text }) => {
+export const LoadingTitleScreen: React.FC = () => {
   const element = useRef<HTMLDivElement>(null)
   const lottieInstance = useRef<AnimationItem>()
 
@@ -25,7 +21,6 @@ export const LoadingTitleScreen: React.FC<ILoadingTitleScreenProps> = ({ text })
   return (
     <BaseTitleScreen sx={{ justifyContent: "center" }}>
       <Box sx={{ width: 100, height: 100 }} ref={element}></Box>
-      {text && <Text>{text}</Text>}
     </BaseTitleScreen>
   )
 }

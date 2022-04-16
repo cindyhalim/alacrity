@@ -50,24 +50,26 @@ export const functions: Serverless["functions"] = {
   //     },
   //   ],
   // },
-  // onCardWon: {
-  //   events: [
-  //     {
-  //       websocket: {
-  //         route: FrontendWebsocketActions.CardWon,
-  //       },
-  //     },
-  //   ],
-  // },
-  // onGameEnded: {
-  //   events: [
-  //     {
-  //       websocket: {
-  //         route: FrontendWebsocketActions.GameEnded,
-  //       },
-  //     },
-  //   ],
-  // },
+  onCardWon: {
+    handler: `src/functions/onCardWon.handler`,
+    events: [
+      {
+        websocket: {
+          route: "card_won",
+        },
+      },
+    ],
+  },
+  onGameEnded: {
+    handler: `src/functions/onGameEnded.handler`,
+    events: [
+      {
+        websocket: {
+          route: "game_ended",
+        },
+      },
+    ],
+  },
   onDisconnect: {
     handler: `src/functions/onDisconnect.handler`,
     events: [

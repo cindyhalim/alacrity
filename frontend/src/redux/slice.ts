@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { IPlayer, IGame } from "alacrity-shared"
+import { IPlayer, IGame, IPlayerScoreInfo } from "alacrity-shared"
 
 export type TRoomStatus = "ready" | "not_found" | "admin_disconnected"
-export type TStartNewGameStatus = "ready" | "loading"
 export interface IState {
   playerId: string
   playerPool: IPlayer[]
-  startNewGameStatus: TStartNewGameStatus
+  isGameLoading: boolean
   currentGame: IGame | null
+  gameScore: IPlayerScoreInfo[] | null
   roomId: string
   roomStatus: TRoomStatus
   showErrorToast: boolean
@@ -17,9 +17,10 @@ const initialState: IState = {
   playerId: "",
   playerPool: [],
   currentGame: null,
+  gameScore: null,
   roomId: "",
   roomStatus: "ready",
-  startNewGameStatus: "ready",
+  isGameLoading: false,
   showErrorToast: false,
 }
 
@@ -31,9 +32,9 @@ export const { actions, reducer } = createSlice({
       ...state,
       showErrorToast: action.payload,
     }),
-    setStartNewGameStatus: (state, action: PayloadAction<TStartNewGameStatus>) => ({
+    setIsGameLoading: (state, action: PayloadAction<boolean>) => ({
       ...state,
-      startNewGameStatus: action.payload,
+      isGameLoading: action.payload,
     }),
     setGame: (state, action: PayloadAction<IGame | null>) => ({
       ...state,
@@ -54,6 +55,10 @@ export const { actions, reducer } = createSlice({
     setRoomStatus: (state, action: PayloadAction<TRoomStatus>) => ({
       ...state,
       roomStatus: action.payload,
+    }),
+    setGameScore: (state, action: PayloadAction<IPlayerScoreInfo[] | null>) => ({
+      ...state,
+      gameScore: action.payload,
     }),
   },
 })

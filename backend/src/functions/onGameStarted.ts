@@ -54,7 +54,6 @@ export const handler = async (event: APIGatewayEvent) => {
           totalDrawCardsRemaining: newGame.drawPile.length,
           wildCard: null,
           currentPlayerId: newGame.currentPlayerId,
-          status: newGame.status,
         },
       },
     }),

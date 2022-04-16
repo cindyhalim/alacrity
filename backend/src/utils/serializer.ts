@@ -20,6 +20,11 @@ export const getSerializedCurrentGame = async ({ roomId }: { roomId: string }): 
   try {
     const room = await database.room.get({ roomId })
     const game = getGame(room)
+
+    if (!game || game.status === "ended") {
+      return null
+    }
+
     const players: IPlayer[] = getPlayers(room).map((player) => {
       const gamePlayer = game?.players.find((gamePlayer) => player.id === gamePlayer.id)
 
@@ -31,16 +36,13 @@ export const getSerializedCurrentGame = async ({ roomId }: { roomId: string }): 
       }
     })
 
-    return game
-      ? {
-          id: game.id,
-          players,
-          totalDrawCardsRemaining: game.drawPile.length,
-          wildCard: game.wildCardPile[game.wildCardPile.length - 1],
-          currentPlayerId: game.currentPlayerId,
-          status: game.status,
-        }
-      : null
+    return {
+      id: game.id,
+      players,
+      totalDrawCardsRemaining: game.drawPile.length,
+      wildCard: game.wildCardPile[game.wildCardPile.length - 1],
+      currentPlayerId: game.currentPlayerId,
+    }
   } catch (e) {
     return null
   }

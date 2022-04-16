@@ -3,41 +3,43 @@ import { WaitingRoom, GameRoom } from "./features"
 import { useAppSelector } from "./redux/utils"
 import { LoadingTitleScreen } from "./components/loading-title-screen"
 import { ErrorScreen } from "./features/error/error-screen"
-import { useDispatch } from "react-redux"
-import { actions } from "./redux/slice"
+import { ScoreBoard } from "./features/score-board"
 import { ErrorToast } from "./features/error/error-toast"
+import { actions } from "./redux/slice"
+import { useDispatch } from "react-redux"
 
 export const App: React.FC = () => {
-  const startNewGameStatus = useAppSelector((state) => state?.startNewGameStatus)
-  const showErrorToast = useAppSelector((state) => state?.showErrorToast)
-  const gameStatus = useAppSelector((state) => state?.currentGame?.status)
+  const currentGame = useAppSelector((state) => state?.currentGame)
   const roomStatus = useAppSelector((state) => state.roomStatus)
   const playerId = useAppSelector((state) => state.playerId)
+  const gameScore = useAppSelector((state) => state.gameScore)
+  const showErrorToast = useAppSelector((state) => state.showErrorToast)
+  const isGameLoading = useAppSelector((state) => state.isGameLoading)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (gameStatus === "started" || showErrorToast) {
-      dispatch(actions.setStartNewGameStatus("ready"))
+    if (currentGame || showErrorToast || gameScore) {
+      dispatch(actions.setIsGameLoading(false))
     }
-  }, [gameStatus, showErrorToast, dispatch])
+  }, [currentGame, showErrorToast, gameScore, dispatch])
 
   if (roomStatus !== "ready") {
     return <ErrorScreen />
   }
 
-  if (!playerId) {
+  if (!playerId || isGameLoading) {
     return <LoadingTitleScreen />
   }
 
-  if (startNewGameStatus === "loading") {
-    return <LoadingTitleScreen text={"Creating game..."} />
+  if (gameScore && gameScore.length) {
+    return <ScoreBoard />
   }
 
   return (
     <>
       <ErrorToast />
-      {gameStatus !== "started" ? <WaitingRoom /> : <GameRoom />}
+      {!currentGame ? <WaitingRoom /> : <GameRoom />}
     </>
   )
 }
