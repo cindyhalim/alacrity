@@ -95,7 +95,23 @@ export const WSContextProvider: React.FC = ({ children }) => {
           ws.current?.send(JSON.stringify(playerJoinedEvent))
         }
       }
+
+      ws.current.onerror = (error) => {
+        console.log("ws error", error)
+      }
+
+      ws.current.onclose = () => {
+        if (ws.current) {
+          // Connection failed
+          console.log("ws closed by server")
+        } else {
+          // Cleanup initiated from app side, can return here, to not attempt a reconnect
+          console.log("ws closed by app component unmount")
+          return
+        }
+      }
     }
+
     if (roomId) {
       initialize()
     }
