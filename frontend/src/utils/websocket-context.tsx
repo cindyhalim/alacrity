@@ -14,6 +14,11 @@ import { useEffect, useRef, createContext, useContext } from "react"
 import { useAppSelector } from "src/redux/utils"
 import { getIsAdmin } from "./helpers"
 
+type TWebsocketErrorEvent = {
+  message: string
+  connectionId: string
+  requestId: string
+}
 const generateRandomId = () => {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
   return new Array(6)
@@ -42,7 +47,13 @@ export const WSContextProvider: React.FC = ({ children }) => {
       ws.current = new WebSocket(config.websocketUrl || "")
       ws.current.onmessage = (message) => {
         const data: TBackendWebsocketEvent = JSON.parse(message.data)
+        const errorData: TWebsocketErrorEvent = JSON.parse(message.data)
         console.log("receieved message:", data)
+
+        if (errorData?.message) {
+          dispatch(actions.setShowErrorToast(true))
+        }
+
         switch (data.action) {
           case BackendWebsocketActions.PlayerIdSet:
             dispatch(actions.setPlayerId(data.playerId))

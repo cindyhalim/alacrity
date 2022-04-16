@@ -8,6 +8,8 @@ import { getIsAdmin, useMainPlayer } from "src/utils/helpers"
 import { PlayerBlock } from "./player-block"
 import { CardSymbol, FrontendWebsocketActions } from "alacrity-shared"
 import { useWSContext } from "src/utils/websocket-context"
+import { useDispatch } from "react-redux"
+import { actions } from "src/redux/slice"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
@@ -18,19 +20,24 @@ export const GameRoom: React.FC = () => {
 
   const wildCard = useAppSelector((state) => state.currentGame?.wildCard)
   const { sendMessage } = useWSContext()
+  const dispatch = useDispatch()
+
   const roomId = useAppSelector((state) => state.roomId)
   const totalDrawCardsRemaining = useAppSelector(
     (state) => state.currentGame?.totalDrawCardsRemaining,
   )
 
   useEffect(() => {
-    if (getIsAdmin() && !totalDrawCardsRemaining) {
-      sendMessage({
-        action: FrontendWebsocketActions.GameEnded,
-        roomId,
-      })
+    if (!totalDrawCardsRemaining) {
+      dispatch(actions.setIsGameLoading(true))
+      if (getIsAdmin()) {
+        sendMessage({
+          action: FrontendWebsocketActions.GameEnded,
+          roomId,
+        })
+      }
     }
-  }, [roomId, totalDrawCardsRemaining, sendMessage])
+  }, [dispatch, roomId, totalDrawCardsRemaining, sendMessage])
 
   return (
     <Box
