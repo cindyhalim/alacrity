@@ -42,7 +42,7 @@ export const WSContextProvider: React.FC = ({ children }) => {
       ws.current = new WebSocket(config.websocketUrl || "")
       ws.current.onmessage = (message) => {
         const data: TBackendWebsocketEvent = JSON.parse(message.data)
-        console.log("data", data)
+        console.log("receieved message:", data)
         switch (data.action) {
           case BackendWebsocketActions.PlayerIdSet:
             dispatch(actions.setPlayerId(data.playerId))
@@ -90,7 +90,10 @@ export const WSContextProvider: React.FC = ({ children }) => {
   return (
     <WSContext.Provider
       value={{
-        sendMessage: (event: TFrontendWebsocketEvent) => ws.current?.send(JSON.stringify(event)),
+        sendMessage: (event: TFrontendWebsocketEvent) => {
+          console.log("sending message:", event)
+          ws.current?.send(JSON.stringify(event))
+        },
       }}
     >
       {children}

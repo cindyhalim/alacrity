@@ -86,10 +86,7 @@ export const Card: React.FC<ICardProps> = ({
       {side === "front" ? (
         <>
           <CardText fontSize={fontSize.front}>{text}</CardText>
-          <Image
-            sx={{ ...symbolStyles, fill: "pink" }}
-            src={symbolToImg[symbol]}
-          />
+          <Image sx={{ ...symbolStyles, fill: "pink" }} src={symbolToImg[symbol]} />
           <CardText fontSize={fontSize.front} upsideDown>
             {text}
           </CardText>
@@ -104,10 +101,7 @@ export const Card: React.FC<ICardProps> = ({
             ...innerCardStyles,
           }}
         >
-          <Image
-            src={CardBackground}
-            sx={{ position: "absolute", height: "90%", width: "90%" }}
-          />
+          <Image src={CardBackground} sx={{ position: "absolute", height: "90%", width: "90%" }} />
           <Text
             sx={{
               fontSize: fontSize.back,
@@ -123,16 +117,47 @@ export const Card: React.FC<ICardProps> = ({
   )
 }
 
+interface IWildCardProps {
+  symbols: CardSymbol[]
+  containerSx?: SxStyleProp
+}
+
+export const WildCard: React.FC<IWildCardProps> = ({ symbols, containerSx }) => {
+  const { containerCard: containerCardStyles, fontSize } = getStylesFromSize("medium")
+
+  return (
+    <Flex
+      sx={{
+        flexDirection: "column",
+        backgroundColor: theme.colors.white,
+        borderRadius: 10,
+        filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
+        justifyContent: "center",
+        alignItems: "center",
+        border: `2px solid ${theme.colors.white}`,
+        ...containerCardStyles,
+        ...containerSx,
+      }}
+    >
+      <Image sx={{ height: 40, width: 40, marginY: 10 }} src={symbolToImg[symbols[0]]} />
+      <CardText sx={{ borderBottom: `1px solid ${theme.colors.black}` }} fontSize={fontSize.front}>
+        WILD CARD
+      </CardText>
+      <CardText fontSize={fontSize.front} upsideDown>
+        WILD CARD
+      </CardText>
+      <Image sx={{ height: 40, width: 40, marginY: 10 }} src={symbolToImg[symbols[1]]} />
+    </Flex>
+  )
+}
+
 interface ICardTextProps {
   upsideDown?: boolean
   fontSize?: number
+  sx?: SxStyleProp
 }
 
-const CardText: React.FC<ICardTextProps> = ({
-  children,
-  upsideDown,
-  fontSize,
-}) => {
+const CardText: React.FC<ICardTextProps> = ({ children, upsideDown, fontSize, sx }) => {
   return (
     <Text
       sx={{
@@ -143,6 +168,7 @@ const CardText: React.FC<ICardTextProps> = ({
         textAlign: "center",
         fontSize,
         ...(upsideDown && { transform: "rotate(180deg)" }),
+        ...sx,
       }}
     >
       {children}

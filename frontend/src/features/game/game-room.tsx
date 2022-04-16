@@ -4,10 +4,11 @@ import { CardEmptyState } from "src/components/card-empty-state"
 
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
-import { Card } from "../../components/card"
+import { Card, WildCard } from "../../components/card"
 import { PlayerBlock } from "./player-block"
-import { CardSymbol } from "alacrity-shared"
+import { CardSymbol, FrontendWebsocketActions } from "alacrity-shared"
 import { Button } from "src/components"
+import { useWSContext } from "src/utils/websocket-context"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
@@ -18,6 +19,7 @@ export const GameRoom: React.FC = () => {
   const player = players.find((player) => player.id === playerId)
 
   const isCurrentPlayerTurn = currentPlayerId === player?.id
+  const wildCard = useAppSelector((state) => state.currentGame?.wildCard)
 
   return (
     <Box
@@ -56,37 +58,46 @@ export const GameRoom: React.FC = () => {
           side={"back"}
           containerSx={{ marginRight: 32 }}
         />
-        <CardEmptyState size={"medium"} />
+        {wildCard ? <WildCard symbols={wildCard.symbols} /> : <CardEmptyState size={"medium"} />}
       </Flex>
       <PlayerBlock player={player} isCurrentPlayerTurn={isCurrentPlayerTurn} />
     </Box>
   )
 }
 
-const CurrentTurnButton: React.FC<{ isCurrentPlayerTurn: boolean }> = ({ isCurrentPlayerTurn }) => (
-  <Flex
-    sx={{
-      flexDirection: "column",
-      minWidth: 167,
-      maxHeight: 110,
-      marginRight: 46,
-    }}
-  >
-    {isCurrentPlayerTurn && (
-      <>
-        <Text
-          sx={{
-            fontFamily: theme.fonts.antonio,
-            fontSize: 35,
-            textAlign: "center",
-            marginBottom: "7px",
-            color: theme.colors.red,
-          }}
-        >
-          YOUR TURN!
-        </Text>
-        <Button type={"game"}>DRAW CARD</Button>
-      </>
-    )}
-  </Flex>
-)
+const CurrentTurnButton: React.FC<{ isCurrentPlayerTurn: boolean }> = ({ isCurrentPlayerTurn }) => {
+  const roomId = useAppSelector((state) => state.roomId)
+  const { sendMessage } = useWSContext()
+  return (
+    <Flex
+      sx={{
+        flexDirection: "column",
+        minWidth: 167,
+        maxHeight: 110,
+        marginRight: 46,
+      }}
+    >
+      {isCurrentPlayerTurn && (
+        <>
+          <Text
+            sx={{
+              fontFamily: theme.fonts.antonio,
+              fontSize: 35,
+              textAlign: "center",
+              marginBottom: "7px",
+              color: theme.colors.red,
+            }}
+          >
+            YOUR TURN!
+          </Text>
+          <Button
+            onClick={() => sendMessage({ action: FrontendWebsocketActions.CardDrawn, roomId })}
+            type={"game"}
+          >
+            DRAW CARD
+          </Button>
+        </>
+      )}
+    </Flex>
+  )
+}
