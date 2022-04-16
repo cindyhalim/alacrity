@@ -85,13 +85,20 @@ export const Card: React.FC<ICardProps> = ({
       }}
     >
       {side === "front" ? (
-        <>
+        <Flex
+          sx={{
+            flexDirection: "column",
+            justifyContent: "space-around",
+            height: "100%",
+            alignItems: "center",
+          }}
+        >
           <CardText fontSize={fontSize.front}>{text}</CardText>
-          <Image sx={{ ...symbolStyles, fill: "pink" }} src={symbolToImg[symbol]} />
+          <Image sx={{ ...symbolStyles }} src={symbolToImg[symbol]} />
           <CardText fontSize={fontSize.front} upsideDown>
             {text}
           </CardText>
-        </>
+        </Flex>
       ) : (
         <Flex
           sx={{
