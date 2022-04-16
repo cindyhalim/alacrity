@@ -19,7 +19,7 @@ export const handler = async (event: APIGatewayEvent) => {
   console.log("onGameStarted: recieved route key:", routeKey)
 
   const room = await database.room.get({ roomId })
-  const currentGame = getGame(room)
+  let currentGame = getGame(room)
 
   const scores = currentGame.players
     .map(
@@ -44,16 +44,17 @@ export const handler = async (event: APIGatewayEvent) => {
   )
 
   if (currentGame.status !== "ended") {
+    currentGame = {
+      ...currentGame,
+      status: "ended",
+    }
     await database.room.updateGame({
       roomId,
-      game: {
-        ...currentGame,
-        status: "ended",
-      },
+      game: currentGame,
     })
   }
 
-  const updatedGame = await getSerializedCurrentGame({ roomId })
+  const updatedGame = getSerializedCurrentGame({ game: currentGame })
 
   await Promise.all(
     currentGame.players.map((player) =>

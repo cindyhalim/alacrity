@@ -79,7 +79,7 @@ export const handler = async (event: APIGatewayEvent) => {
       players: game.players.filter((player) => player.id !== connectionId),
     }
     await database.room.updateGame({ roomId, game: updatedGame })
-    const currentGame = await getSerializedCurrentGame({ roomId })
+    const currentGame = getSerializedCurrentGame({ game: updatedGame })
 
     await Promise.all(
       remainingPlayers.map((player) =>
