@@ -1,3 +1,5 @@
+const scaleSize = (value: number) => value * 0.8
+
 export const theme = {
   colors: {
     black: "#112633",
@@ -14,22 +16,46 @@ export const theme = {
   },
   styles: {
     largeCard: {
-      containerCard: { width: 242, height: 327 },
-      innerCard: { width: 228, height: 307, borderRadius: 15 },
-      symbol: { width: 75, height: 75, marginY: 50 },
-      fontSize: { back: 35, front: 35 },
+      containerCard: { width: scaleSize(242), height: scaleSize(327) },
+      innerCard: {
+        width: scaleSize(228),
+        height: scaleSize(307),
+        borderRadius: scaleSize(15),
+      },
+      symbol: {
+        width: scaleSize(75),
+        height: scaleSize(75),
+        marginY: scaleSize(50),
+      },
+      fontSize: { back: scaleSize(35), front: scaleSize(35) },
     },
     mediumCard: {
-      containerCard: { width: 180, height: 245 },
-      innerCard: { width: 165, height: 230, borderRadius: 10 },
-      symbol: { width: 30, height: 30, marginY: 30 },
-      fontSize: { back: 30, front: 30 },
+      containerCard: { width: scaleSize(180), height: scaleSize(245) },
+      innerCard: {
+        width: scaleSize(165),
+        height: scaleSize(230),
+        borderRadius: scaleSize(10),
+      },
+      symbol: {
+        width: scaleSize(30),
+        height: scaleSize(30),
+        marginY: scaleSize(30),
+      },
+      fontSize: { back: scaleSize(30), front: scaleSize(30) },
     },
     smallCard: {
-      containerCard: { width: 140, height: 185 },
-      innerCard: { width: 128, height: 172, borderRadius: 10 },
-      symbol: { width: 30, height: 30, marginY: 30 },
-      fontSize: { back: 26, front: 20 },
+      containerCard: { width: scaleSize(140), height: scaleSize(185) },
+      innerCard: {
+        width: scaleSize(128),
+        height: scaleSize(172),
+        borderRadius: scaleSize(10),
+      },
+      symbol: {
+        width: scaleSize(30),
+        height: scaleSize(30),
+        marginY: scaleSize(30),
+      },
+      fontSize: { back: scaleSize(26), front: scaleSize(20) },
     },
   },
 }
