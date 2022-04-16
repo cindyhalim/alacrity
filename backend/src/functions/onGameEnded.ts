@@ -32,15 +32,15 @@ export const handler = async (event: APIGatewayEvent) => {
     .sort((a, b) => b.score - a.score)
 
   await Promise.all(
-    currentGame.players.map((player) => {
+    currentGame.players.map((player) =>
       ws.sendMessage<IGameScoreUpdatedEvent>({
         connectionId: player.id,
         body: {
           action: BackendWebsocketActions.GameScoreUpdated,
           scores,
         },
-      })
-    }),
+      }),
+    ),
   )
 
   if (currentGame.status !== "ended") {
@@ -56,15 +56,15 @@ export const handler = async (event: APIGatewayEvent) => {
   const updatedGame = await getSerializedCurrentGame({ roomId })
 
   await Promise.all(
-    currentGame.players.map((player) => {
+    currentGame.players.map((player) =>
       ws.sendMessage<IGameUpdatedEvent>({
         connectionId: player.id,
         body: {
           action: BackendWebsocketActions.GameUpdated,
           currentGame: updatedGame,
         },
-      })
-    }),
+      }),
+    ),
   )
 
   return { statusCode: 200 }
