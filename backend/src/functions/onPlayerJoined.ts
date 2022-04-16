@@ -75,7 +75,7 @@ export const handler = async (event: APIGatewayEvent) => {
 
   if (currentGame && currentGame.status === "started") {
     console.log("game in progress found!")
-    ws.sendMessage<IGameUpdatedEvent>({
+    await ws.sendMessage<IGameUpdatedEvent>({
       connectionId,
       body: {
         action: BackendWebsocketActions.GameUpdated,
