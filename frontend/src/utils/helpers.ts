@@ -22,16 +22,16 @@ export const usePrevious = (value: any) => {
 }
 
 export const useCardAnimationSequence = () => {
-  const [isFlipped, setisFlipped] = useState<boolean>(false)
+  const [isRevealed, setIsRevealed] = useState<boolean>(false)
   const cardAnimation = useAnimation()
 
   const addSequence = async (): Promise<void> => {
-    if (isFlipped) setisFlipped(false)
+    if (isRevealed) setIsRevealed(false)
     await cardAnimation.start({
       translateX: [-40, 0],
       transition: { duration: 0.2, ease: "linear" },
     })
-    setisFlipped(true)
+    setIsRevealed(true)
     return await cardAnimation.start({
       rotateY: [90, 0],
       transition: { duration: 0.2 },
@@ -45,5 +45,5 @@ export const useCardAnimationSequence = () => {
     })
   }
 
-  return { cardAnimation, addSequence, removeSequence, isFlipped }
+  return { cardAnimation, addSequence, removeSequence, isRevealed }
 }
