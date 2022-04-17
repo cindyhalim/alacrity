@@ -36,16 +36,14 @@ export const handler = async (event: APIGatewayEvent) => {
       currentPlayerId: nextPlayerId,
       players: updatedGamePlayers,
     }
-    console.log("updating game in db")
-    await database.room.updateGame({ roomId, game: updatedGame })
   } else {
     updatedGame = {
       ...game,
       wildCardPile: [...game.wildCardPile, nextCard],
     }
-    console.log("updating game in db")
-    await database.room.updateGame({ roomId, game: updatedGame })
   }
+  console.log("updating game in db")
+  await database.room.updateGame({ roomId, game: updatedGame })
 
   const serializedUpdatedGame = getSerializedCurrentGame({ game: updatedGame })
 
