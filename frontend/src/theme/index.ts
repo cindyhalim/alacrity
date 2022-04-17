@@ -25,7 +25,6 @@ export const theme = {
       symbol: {
         width: scaleSize(75),
         height: scaleSize(75),
-        marginY: scaleSize(50),
       },
       fontSize: { back: scaleSize(35), front: scaleSize(35) },
     },
@@ -39,7 +38,6 @@ export const theme = {
       symbol: {
         width: scaleSize(30),
         height: scaleSize(30),
-        marginY: scaleSize(30),
       },
       fontSize: { back: scaleSize(30), front: scaleSize(30) },
     },
@@ -53,7 +51,6 @@ export const theme = {
       symbol: {
         width: scaleSize(30),
         height: scaleSize(30),
-        marginY: scaleSize(30),
       },
       fontSize: { back: scaleSize(26), front: scaleSize(20) },
     },
