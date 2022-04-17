@@ -1,12 +1,11 @@
 import { FrontendWebsocketActions } from "alacrity-shared"
 import { AnimatePresence, motion } from "framer-motion"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { useDispatch } from "react-redux"
 import { Box, Flex, Text } from "rebass"
 import { actions } from "src/redux/slice"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
-import { getIsAdmin } from "src/utils/helpers"
 import { useWSContext } from "src/utils/websocket-context"
 import { Button } from "../components/button"
 
