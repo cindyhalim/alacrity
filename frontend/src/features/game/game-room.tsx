@@ -23,7 +23,6 @@ export const GameRoom: React.FC = () => {
     (state) => state.currentGame?.totalDrawCardsRemaining,
   )
 
-  console.log({ currentPileColor })
   const mainPlayer = useMainPlayer()
   const { sendMessage } = useWSContext()
   const dispatch = useDispatch()
