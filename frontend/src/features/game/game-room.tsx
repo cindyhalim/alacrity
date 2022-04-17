@@ -11,7 +11,7 @@ import { useWSContext } from "src/utils/websocket-context"
 import { useDispatch } from "react-redux"
 import { actions } from "src/redux/slice"
 import { Settings } from "../settings"
-import { WildCard } from "./animated-wild-card"
+import { WildCard } from "./wild-card"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
