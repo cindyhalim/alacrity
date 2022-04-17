@@ -6,28 +6,29 @@ import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
 import { getIsAdmin, useMainPlayer } from "src/utils/helpers"
 import { PlayerBlock } from "./player-block"
-import { CardSymbol, FrontendWebsocketActions } from "alacrity-shared"
+import { FrontendWebsocketActions } from "alacrity-shared"
 import { useWSContext } from "src/utils/websocket-context"
 import { useDispatch } from "react-redux"
 import { actions } from "src/redux/slice"
 import { Settings } from "../settings"
-import { AnimatedWildCard } from "./animated-wild-card"
+import { WildCard } from "./animated-wild-card"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
   const currentPlayerId = useAppSelector((state) => state.currentGame?.currentPlayerId)
-  const mainPlayer = useMainPlayer()
-
-  const isCurrentPlayerTurn = currentPlayerId === mainPlayer?.id
-
+  const currentPileColor = useAppSelector((state) => state.currentGame?.drawCardColor)
   const wildCard = useAppSelector((state) => state.currentGame?.wildCard)
-  const { sendMessage } = useWSContext()
-  const dispatch = useDispatch()
-
   const roomId = useAppSelector((state) => state.roomId)
   const totalDrawCardsRemaining = useAppSelector(
     (state) => state.currentGame?.totalDrawCardsRemaining,
   )
+
+  console.log({ currentPileColor })
+  const mainPlayer = useMainPlayer()
+  const { sendMessage } = useWSContext()
+  const dispatch = useDispatch()
+
+  const isCurrentPlayerTurn = currentPlayerId === mainPlayer?.id
 
   useEffect(() => {
     if (!totalDrawCardsRemaining) {
@@ -72,18 +73,13 @@ export const GameRoom: React.FC = () => {
         <Flex sx={{ justifyContent: "center", alignItems: "center", margin: 87 }}>
           <CurrentTurnButton isCurrentPlayerTurn={isCurrentPlayerTurn} />
           <Card
-            text={"DRAW PILE"}
-            symbol={CardSymbol.DIAMOND}
+            color={currentPileColor}
             size={"medium"}
             side={"back"}
             containerSx={{ marginRight: 32 }}
           />
           <Flex sx={{ minWidth: CURRENT_TURN_WIDTH }}>
-            {wildCard ? (
-              <AnimatedWildCard symbols={wildCard.symbols} />
-            ) : (
-              <CardEmptyState size={"medium"} />
-            )}
+            {wildCard ? <WildCard {...wildCard} /> : <CardEmptyState size={"medium"} />}
           </Flex>
         </Flex>
       </Box>

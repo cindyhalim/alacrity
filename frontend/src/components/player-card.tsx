@@ -37,23 +37,23 @@ export const PlayerCard: React.FC<IPlayerCardProps> = ({
       >
         {playerName.toUpperCase()}
       </Text>
-      <AnimatedPlayingCard card={card} cardSize={cardSize} totalCards={totalCards} />
+      <PlayingCard card={card} cardSize={cardSize} totalCards={totalCards} />
     </Flex>
   )
 }
 
-interface IAnimatedPlayingCardProps {
+interface IPlayingCardProps {
   cardSize: TCardSize
   totalCards?: number
   card: IPlayingCard | null
 }
 
-export const AnimatedPlayingCard: React.FC<IAnimatedPlayingCardProps> = ({
+export const PlayingCard: React.FC<IPlayingCardProps> = ({
   cardSize,
   totalCards: currTotal = 0,
   card,
 }) => {
-  const { cardAnimation, addSequence, removeSequence, isFlipped } = useCardAnimationSequence()
+  const { cardAnimation, addSequence, removeSequence, isRevealed } = useCardAnimationSequence()
   const prevTotal = usePrevious(currTotal)
 
   useEffect(() => {
@@ -70,14 +70,14 @@ export const AnimatedPlayingCard: React.FC<IAnimatedPlayingCardProps> = ({
   }, [currTotal])
 
   return (
-    <AnimatedCardWrapper
-      id={"animated-playing-card"}
-      animate={cardAnimation}
-      cardSize={cardSize}
-      isFlipped={isFlipped}
-    >
+    <AnimatedCardWrapper id={"animated-playing-card"} animate={cardAnimation}>
       {card ? (
-        <Card {...card} size={cardSize} side={"front"} />
+        <Card
+          cardData={card}
+          color={card.color}
+          size={cardSize}
+          side={isRevealed ? "front" : "back"}
+        />
       ) : (
         <CardEmptyState size={cardSize} />
       )}
