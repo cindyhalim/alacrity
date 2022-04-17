@@ -15,15 +15,15 @@ export const MobileScreen: React.FC = () => {
       }}
     >
       <Image
-        sx={{ height: 400 }}
+        sx={{ width: 375 }}
         src="https://alacrity-cards-dev.s3.us-east-2.amazonaws.com/alacrity-share.png"
       />
       <Text
         sx={{
           fontFamily: theme.fonts.antonio,
           textTransform: "uppercase",
-          fontSize: 35,
-          marginTop: 20,
+          fontSize: 30,
+          marginTop: 30,
         }}
       >
         Mobile view coming soon!
@@ -31,7 +31,7 @@ export const MobileScreen: React.FC = () => {
       <Text
         sx={{
           fontFamily: theme.fonts.antonio,
-          fontSize: 20,
+          fontSize: 18,
           marginTop: "5px",
         }}
       >
