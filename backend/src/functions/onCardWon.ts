@@ -47,7 +47,7 @@ export const handler = async (event: APIGatewayEvent) => {
   await database.room.updateGame({ roomId, game: updatedGame })
 
   console.log("retrieving serialized updated game")
-  const serializedUpdatedGame = await getSerializedCurrentGame({ roomId })
+  const serializedUpdatedGame = getSerializedCurrentGame({ game: updatedGame })
 
   console.log("sending event", BackendWebsocketActions.GameUpdated)
   await Promise.all(

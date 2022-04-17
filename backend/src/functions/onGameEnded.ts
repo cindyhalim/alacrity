@@ -7,7 +7,7 @@ import {
 } from "alacrity-shared"
 
 import { database, ws } from "@services"
-import { getGame, getSerializedCurrentGame } from "@utils"
+import { getGame, getPlayers, getSerializedCurrentGame } from "@utils"
 import { APIGatewayEvent } from "aws-lambda"
 
 export const handler = async (event: APIGatewayEvent) => {
@@ -19,7 +19,9 @@ export const handler = async (event: APIGatewayEvent) => {
   console.log("onGameStarted: recieved route key:", routeKey)
 
   const room = await database.room.get({ roomId })
-  const currentGame = getGame(room)
+  const allPlayers = getPlayers(room)
+
+  let currentGame = getGame(room)
 
   const scores = currentGame.players
     .map(
@@ -44,19 +46,20 @@ export const handler = async (event: APIGatewayEvent) => {
   )
 
   if (currentGame.status !== "ended") {
+    currentGame = {
+      ...currentGame,
+      status: "ended",
+    }
     await database.room.updateGame({
       roomId,
-      game: {
-        ...currentGame,
-        status: "ended",
-      },
+      game: currentGame,
     })
   }
 
-  const updatedGame = await getSerializedCurrentGame({ roomId })
+  const updatedGame = getSerializedCurrentGame({ game: currentGame })
 
   await Promise.all(
-    currentGame.players.map((player) =>
+    allPlayers.map((player) =>
       ws.sendMessage<IGameUpdatedEvent>({
         connectionId: player.id,
         body: {
