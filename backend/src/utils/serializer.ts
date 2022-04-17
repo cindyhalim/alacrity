@@ -31,10 +31,12 @@ export const getSerializedCurrentGame = ({ game }: { game: IGameModel }): IGame 
       }
     })
 
+    const drawPileLength = game.drawPile.length
     return {
       id: game.id,
       players,
-      totalDrawCardsRemaining: game.drawPile.length,
+      totalDrawCardsRemaining: drawPileLength,
+      drawCardColor: game.drawPile[drawPileLength - 1].color,
       wildCard: game.wildCardPile[game.wildCardPile.length - 1],
       currentPlayerId: game.currentPlayerId,
     }

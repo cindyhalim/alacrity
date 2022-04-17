@@ -2,7 +2,7 @@ import { nanoid } from "nanoid"
 import { BackendWebsocketActions, IGameStartedEvent, IGameUpdatedEvent } from "alacrity-shared"
 
 import { cardsData, database, IGameModel, IGamePlayer, ws } from "@services"
-import { getGame, getPlayers } from "@utils"
+import { getGame, getPlayers, getSerializedCurrentGame } from "@utils"
 import { APIGatewayEvent } from "aws-lambda"
 import { getDrawPile, shuffle } from "../helpers/cards"
 
@@ -54,13 +54,7 @@ export const handler = async (event: APIGatewayEvent) => {
       connectionId: player.id,
       body: {
         action: BackendWebsocketActions.GameUpdated,
-        currentGame: {
-          id: newGame.id,
-          players: newGame.players,
-          totalDrawCardsRemaining: newGame.drawPile.length,
-          wildCard: null,
-          currentPlayerId: newGame.currentPlayerId,
-        },
+        currentGame: getSerializedCurrentGame({ game: newGame }),
       },
     }),
   )
