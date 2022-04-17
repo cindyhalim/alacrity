@@ -61,6 +61,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlay
   return isOpponent ? (
     <PlayerCard
       {...sharedProps}
+      totalCards={player.playPile?.length}
       onClick={() => handleCardWon({ playerCard, mainPlayer, wildCard })}
     />
   ) : (
@@ -72,7 +73,7 @@ export const PlayerBlock: React.FC<IPlayerBlockProps> = ({ player, isCurrentPlay
         justifyContent: "center",
       }}
     >
-      <PlayerCard {...sharedProps} />
+      <PlayerCard {...sharedProps} totalCards={mainPlayer.playPile?.length} />
     </Flex>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { Box, Flex, Text } from "rebass"
 
-import { CardEmptyState, Card, Button, WildCard } from "src/components"
+import { CardEmptyState, Card, Button } from "src/components"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
 import { getIsAdmin, useMainPlayer } from "src/utils/helpers"
@@ -11,6 +11,7 @@ import { useWSContext } from "src/utils/websocket-context"
 import { useDispatch } from "react-redux"
 import { actions } from "src/redux/slice"
 import { Settings } from "../settings"
+import { AnimatedWildCard } from "./animated-wild-card"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
@@ -79,7 +80,7 @@ export const GameRoom: React.FC = () => {
           />
           <Flex sx={{ minWidth: CURRENT_TURN_WIDTH }}>
             {wildCard ? (
-              <WildCard symbols={wildCard.symbols} />
+              <AnimatedWildCard symbols={wildCard.symbols} />
             ) : (
               <CardEmptyState size={"medium"} />
             )}
