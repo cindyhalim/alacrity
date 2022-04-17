@@ -10,7 +10,15 @@ export const ScoreBoard: React.FC = () => {
   const score = useAppSelector((state) => state.gameScore)
   const playerId = useAppSelector((state) => state.playerId)
   const dispatch = useDispatch()
-  const winner = score?.[0]
+
+  const getTitle = () => {
+    const winner = score?.[0]
+    if (winner?.score === 0) {
+      return "GAME ENDED"
+    }
+
+    return `WINNER: ${winner?.name.toUpperCase()} 🎉`
+  }
 
   const handleBackToRoom = () => {
     dispatch(actions.setGameScore(null))
@@ -33,7 +41,9 @@ export const ScoreBoard: React.FC = () => {
           fontSize: 60,
           fontFamily: theme.fonts.antonio,
         }}
-      >{`WINNER: ${winner?.name.toUpperCase()} 🎉`}</Text>
+      >
+        {getTitle()}
+      </Text>
       <Box
         sx={{
           marginTop: 40,

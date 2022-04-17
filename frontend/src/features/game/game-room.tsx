@@ -10,6 +10,7 @@ import { CardSymbol, FrontendWebsocketActions } from "alacrity-shared"
 import { useWSContext } from "src/utils/websocket-context"
 import { useDispatch } from "react-redux"
 import { actions } from "src/redux/slice"
+import { Settings } from "../settings"
 
 export const GameRoom: React.FC = () => {
   const players = useAppSelector((state) => state.currentGame?.players || [])
@@ -40,47 +41,54 @@ export const GameRoom: React.FC = () => {
   }, [dispatch, roomId, totalDrawCardsRemaining, sendMessage])
 
   return (
-    <Box
-      sx={{
-        bg: theme.colors.lightBg,
-        width: "100vw",
-        height: "100vh",
-        position: "relative",
-        overflowY: "hidden",
-        paddingX: 10,
-        paddingTop: 15,
-      }}
-    >
-      <Flex
-        justifyContent={"space-evenly"}
+    <>
+      <Box
         sx={{
-          width: "100%",
-          minHeight: theme.styles.smallCard.containerCard.height,
+          bg: theme.colors.lightBg,
+          width: "100vw",
+          height: "100vh",
+          position: "relative",
+          overflowY: "hidden",
+          paddingX: 10,
+          paddingTop: 15,
         }}
       >
-        {players.map((player) => (
-          <PlayerBlock
-            key={player.id}
-            player={player}
-            isCurrentPlayerTurn={currentPlayerId === player.id}
-          />
-        ))}
-      </Flex>
-      <Flex sx={{ justifyContent: "center", alignItems: "center", marginY: 87 }}>
-        <CurrentTurnButton isCurrentPlayerTurn={isCurrentPlayerTurn} />
-        <Card
-          text={"DRAW PILE"}
-          symbol={CardSymbol.DIAMOND}
-          size={"medium"}
-          side={"back"}
-          containerSx={{ marginRight: 32 }}
-          color={CARD_COLORS[(totalDrawCardsRemaining || 0) % CARD_COLORS.length]}
-        />
-        <Flex sx={{ minWidth: CURRENT_TURN_WIDTH }}>
-          {wildCard ? <WildCard symbols={wildCard.symbols} /> : <CardEmptyState size={"medium"} />}
+        <Flex
+          justifyContent={"space-evenly"}
+          sx={{
+            width: "100%",
+            minHeight: theme.styles.smallCard.containerCard.height,
+          }}
+        >
+          {players.map((player) => (
+            <PlayerBlock
+              key={player.id}
+              player={player}
+              isCurrentPlayerTurn={currentPlayerId === player.id}
+            />
+          ))}
         </Flex>
-      </Flex>
-    </Box>
+        <Flex sx={{ justifyContent: "center", alignItems: "center", margin: 87 }}>
+          <CurrentTurnButton isCurrentPlayerTurn={isCurrentPlayerTurn} />
+          <Card
+            text={"DRAW PILE"}
+            symbol={CardSymbol.DIAMOND}
+            size={"medium"}
+            side={"back"}
+            containerSx={{ marginRight: 32 }}
+            color={CARD_COLORS[(totalDrawCardsRemaining || 0) % CARD_COLORS.length]}
+          />
+          <Flex sx={{ minWidth: CURRENT_TURN_WIDTH }}>
+            {wildCard ? (
+              <WildCard symbols={wildCard.symbols} />
+            ) : (
+              <CardEmptyState size={"medium"} />
+            )}
+          </Flex>
+        </Flex>
+      </Box>
+      {getIsAdmin() && <Settings />}
+    </>
   )
 }
 

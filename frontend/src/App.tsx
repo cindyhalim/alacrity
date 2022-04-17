@@ -17,6 +17,7 @@ export const App: React.FC = () => {
   const gameScore = useAppSelector((state) => state.gameScore)
   const showErrorToast = useAppSelector((state) => state.showErrorToast)
   const isGameLoading = useAppSelector((state) => state.isGameLoading)
+  const playerNotInCurrentGame = !currentGame?.players.find((player) => player.id === playerId)
 
   const dispatch = useDispatch()
 
@@ -42,6 +43,9 @@ export const App: React.FC = () => {
 
   if (gameScore && gameScore.length) {
     return <ScoreBoard />
+  }
+  if (currentGame && playerNotInCurrentGame) {
+    return <LoadingTitleScreen text="Game in progress..." />
   }
 
   return (

@@ -1,6 +1,6 @@
 import { IPlayer, IGame } from "alacrity-shared"
-import { database } from "@services"
-import { getGame, getPlayers } from "./mappers"
+import { database, IGameModel } from "@services"
+import { getPlayers } from "./mappers"
 
 export const getSerializedPlayerPool = async ({
   roomId,
@@ -16,23 +16,18 @@ export const getSerializedPlayerPool = async ({
   return players
 }
 
-export const getSerializedCurrentGame = async ({ roomId }: { roomId: string }): Promise<IGame> => {
+export const getSerializedCurrentGame = ({ game }: { game: IGameModel }): IGame => {
   try {
-    const room = await database.room.get({ roomId })
-    const game = getGame(room)
-
     if (!game || game.status === "ended") {
       return null
     }
 
-    const players: IPlayer[] = getPlayers(room).map((player) => {
-      const gamePlayer = game?.players.find((gamePlayer) => player.id === gamePlayer.id)
-
+    const players: IPlayer[] = game.players.map((player) => {
       return {
         id: player.id,
         name: player.name,
-        points: gamePlayer?.winningPile.length,
-        playPile: gamePlayer?.playPile,
+        points: player?.winningPile.length,
+        playPile: player?.playPile,
       }
     })
 

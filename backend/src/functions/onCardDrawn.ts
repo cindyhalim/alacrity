@@ -19,6 +19,8 @@ export const handler = async (event: APIGatewayEvent) => {
   const nextCard = game.drawPile.pop()
   console.log("next card", nextCard)
 
+  let updatedGame: IGameModel | null = null
+
   if (nextCard.type === "playing") {
     const updatedGamePlayers = game.players.map((player) =>
       player.id === game.currentPlayerId
@@ -29,23 +31,21 @@ export const handler = async (event: APIGatewayEvent) => {
     const currentPlayerIndex = playerIds.indexOf(game.currentPlayerId)
     const nextPlayerId = game.players[(currentPlayerIndex + 1) % game.players.length].id
 
-    const updatedGame: IGameModel = {
+    updatedGame = {
       ...game,
       currentPlayerId: nextPlayerId,
       players: updatedGamePlayers,
     }
-    console.log("updating game in db")
-    await database.room.updateGame({ roomId, game: updatedGame })
   } else {
-    const updatedGame: IGameModel = {
+    updatedGame = {
       ...game,
       wildCardPile: [...game.wildCardPile, nextCard],
     }
-    console.log("updating game in db")
-    await database.room.updateGame({ roomId, game: updatedGame })
   }
+  console.log("updating game in db")
+  await database.room.updateGame({ roomId, game: updatedGame })
 
-  const serializedUpdatedGame = await getSerializedCurrentGame({ roomId })
+  const serializedUpdatedGame = getSerializedCurrentGame({ game: updatedGame })
 
   const sendMessagePromises = players.map((player) =>
     ws.sendMessage<IGameUpdatedEvent>({
