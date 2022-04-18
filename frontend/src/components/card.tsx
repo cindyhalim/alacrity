@@ -20,6 +20,7 @@ interface ICardProps {
   side?: "front" | "back"
   size?: TCardSize
   containerSx?: SxStyleProp
+  color?: string
 }
 
 const symbolToImg: { [key in CardSymbol]: string } = {
@@ -33,12 +34,11 @@ const symbolToImg: { [key in CardSymbol]: string } = {
   WAVE: Wave,
 }
 
-const CARD_COLORS = [
+export const CARD_COLORS = [
   theme.colors.black,
   theme.colors.navy,
   theme.colors.orange,
   theme.colors.red,
-  theme.colors.sand,
 ]
 
 export const getStylesFromSize = (size: TCardSize) => {
@@ -59,6 +59,7 @@ export const Card: React.FC<ICardProps> = ({
   side = "front",
   size = "small",
   containerSx,
+  color = CARD_COLORS[Math.floor(Math.random() * CARD_COLORS.length)],
 }) => {
   const {
     containerCard: containerCardStyles,
@@ -66,8 +67,6 @@ export const Card: React.FC<ICardProps> = ({
     symbol: symbolStyles,
     fontSize,
   } = getStylesFromSize(size)
-
-  const color = CARD_COLORS[Math.floor(Math.random() * CARD_COLORS.length)]
 
   return (
     <Flex

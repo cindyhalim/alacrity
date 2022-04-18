@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { Box, Flex, Text } from "rebass"
 
-import { CardEmptyState, Card, Button, WildCard } from "src/components"
+import { CardEmptyState, Card, Button, WildCard, CARD_COLORS } from "src/components"
 import { useAppSelector } from "src/redux/utils"
 import { theme } from "src/theme"
 import { getIsAdmin, useMainPlayer } from "src/utils/helpers"
@@ -76,6 +76,7 @@ export const GameRoom: React.FC = () => {
             size={"medium"}
             side={"back"}
             containerSx={{ marginRight: 32 }}
+            color={CARD_COLORS[(totalDrawCardsRemaining || 0) % CARD_COLORS.length]}
           />
           <Flex sx={{ minWidth: CURRENT_TURN_WIDTH }}>
             {wildCard ? (
