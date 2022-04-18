@@ -3,7 +3,8 @@ import React, { useEffect } from "react"
 import { Flex, Text } from "rebass"
 import { theme } from "../theme"
 import { useCardAnimationSequence, usePrevious } from "src/utils/helpers"
-import { Card, CardEmptyState, TCardSize, AnimatedCardWrapper } from "../components"
+import { Card, CardEmptyState, TCardSize } from "../components"
+import { motion } from "framer-motion"
 
 export interface IPlayerCardProps {
   card: IPlayingCard | null
@@ -70,7 +71,7 @@ export const PlayingCard: React.FC<IPlayingCardProps> = ({
   }, [currTotal])
 
   return (
-    <AnimatedCardWrapper id={"animated-playing-card"} animate={cardAnimation}>
+    <motion.div id={"animated-playing-card"} animate={cardAnimation}>
       {card ? (
         <Card
           cardData={card}
@@ -81,6 +82,6 @@ export const PlayingCard: React.FC<IPlayingCardProps> = ({
       ) : (
         <CardEmptyState size={cardSize} />
       )}
-    </AnimatedCardWrapper>
+    </motion.div>
   )
 }

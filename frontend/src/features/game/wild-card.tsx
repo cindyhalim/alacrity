@@ -1,7 +1,8 @@
 import { IWildCard } from "alacrity-shared"
 import React, { useEffect } from "react"
 import { useCardAnimationSequence, usePrevious } from "src/utils/helpers"
-import { AnimatedCardWrapper, Card } from "src/components"
+import { Card } from "src/components"
+import { motion } from "framer-motion"
 
 export const WildCard: React.FC<IWildCard> = (wildCard) => {
   const { cardAnimation, addSequence, isRevealed } = useCardAnimationSequence()
@@ -15,8 +16,8 @@ export const WildCard: React.FC<IWildCard> = (wildCard) => {
   }, [currSymbols])
 
   return (
-    <AnimatedCardWrapper id="wild-card-animation" animate={cardAnimation}>
+    <motion.div id="wild-card-animation" animate={cardAnimation}>
       <Card cardData={wildCard} color={wildCard.color} side={isRevealed ? "front" : "back"} />
-    </AnimatedCardWrapper>
+    </motion.div>
   )
 }
