@@ -1,5 +1,5 @@
 import { CardsDataJSON } from "@services"
-import { CardSymbol, IPlayingCard, IWildCard } from "alacrity-shared"
+import { CardColor, CardSymbol, IPlayingCard, IWildCard } from "alacrity-shared"
 
 export const TOTAL_PLAYING_CARDS = 92
 export const TOTAL_WILD_CARDS = 8
@@ -38,11 +38,21 @@ export const getDrawPile = ({
     return [...prev, ...selectedWordsForDifficulty]
   }, [])
 
+  const cardColors = [
+    CardColor.BLACK,
+    CardColor.NAVY,
+    CardColor.ORANGE,
+    CardColor.RED,
+    CardColor.SAND,
+  ]
+
   const unshuffledDrawPile = symbols.reduce((prev: IPlayingCard[], curr) => {
+    const color = cardColors[Math.floor(Math.random() * cardColors.length)]
     const currentCards = selectedWords.splice(0, TOTAL_CARDS_PER_SYMBOL).map(
       (card): IPlayingCard => ({
         type: "playing",
         text: card,
+        color,
         symbol: curr,
       }),
     )
@@ -53,7 +63,7 @@ export const getDrawPile = ({
   const shuffledSymbolA = shuffle(symbols)
   let shuffledSymbolB = shuffle(symbols)
 
-  const wildCardPile = []
+  const wildCardPile: IWildCard[] = []
   const symbolSet = new Set()
 
   while (wildCardPile.length < TOTAL_WILD_CARDS) {
@@ -67,9 +77,11 @@ export const getDrawPile = ({
       !symbolSet.has(JSON.stringify(chosenSymbols)) &&
       !symbolSet.has(JSON.stringify(flippedChosenSymbols))
     ) {
+      const color = cardColors[Math.floor(Math.random() * cardColors.length)]
       wildCardPile.push({
         type: "wildCard" as const,
         symbols: chosenSymbols,
+        color,
       })
       symbolSet.add(JSON.stringify(chosenSymbols))
       symbolSet.add(JSON.stringify(flippedChosenSymbols))

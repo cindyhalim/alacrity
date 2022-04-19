@@ -1,7 +1,7 @@
 import React from "react"
 import { Flex, Image, SxStyleProp, Text } from "rebass"
 import { theme } from "../theme"
-import { CardSymbol } from "alacrity-shared"
+import { CardColor, CardSymbol, IPlayingCard, IWildCard } from "alacrity-shared"
 
 import Circle from "src/assets/circle.svg"
 import Diamond from "src/assets/diamond.svg"
@@ -14,13 +14,14 @@ import Wave from "src/assets/wave.svg"
 import CardBackground from "src/assets/card-background.svg"
 
 export type TCardSize = "small" | "medium" | "large"
+
+type CardData = IPlayingCard | IWildCard
 interface ICardProps {
-  symbol: CardSymbol
-  text: string
+  cardData?: CardData
+  color: CardColor | undefined
   side?: "front" | "back"
   size?: TCardSize
   containerSx?: SxStyleProp
-  color?: string
 }
 
 const symbolToImg: { [key in CardSymbol]: string } = {
@@ -33,13 +34,6 @@ const symbolToImg: { [key in CardSymbol]: string } = {
   STAR: Star,
   WAVE: Wave,
 }
-
-export const CARD_COLORS = [
-  theme.colors.black,
-  theme.colors.navy,
-  theme.colors.orange,
-  theme.colors.red,
-]
 
 export const getStylesFromSize = (size: TCardSize) => {
   switch (size) {
@@ -54,19 +48,61 @@ export const getStylesFromSize = (size: TCardSize) => {
 }
 
 export const Card: React.FC<ICardProps> = ({
-  symbol,
-  text,
+  cardData,
+  color,
   side = "front",
   size = "small",
   containerSx,
-  color = CARD_COLORS[Math.floor(Math.random() * CARD_COLORS.length)],
 }) => {
+  const cardSize = cardData?.type === "wildCard" ? "medium" : size
   const {
     containerCard: containerCardStyles,
     innerCard: innerCardStyles,
     symbol: symbolStyles,
     fontSize,
-  } = getStylesFromSize(size)
+  } = getStylesFromSize(cardSize)
+
+  const getFrontCard = (cardData: CardData | undefined) => {
+    switch (cardData?.type) {
+      case "wildCard":
+        const { symbols } = cardData
+        return (
+          <>
+            <Image sx={{ height: 40, width: 40, marginY: 10 }} src={symbolToImg[symbols[0]]} />
+            <CardText
+              sx={{ borderBottom: `1px solid ${theme.colors.black}` }}
+              fontSize={fontSize.front}
+            >
+              WILD CARD
+            </CardText>
+            <CardText fontSize={fontSize.front} upsideDown>
+              WILD CARD
+            </CardText>
+            <Image sx={{ height: 40, width: 40, marginY: 10 }} src={symbolToImg[symbols[1]]} />
+          </>
+        )
+      case "playing":
+        const { text, symbol } = cardData
+        return (
+          <Flex
+            sx={{
+              flexDirection: "column",
+              justifyContent: "space-around",
+              height: "100%",
+              alignItems: "center",
+            }}
+          >
+            <CardText fontSize={fontSize.front}>{text}</CardText>
+            <Image sx={{ ...symbolStyles }} src={symbolToImg[symbol]} />
+            <CardText fontSize={fontSize.front} upsideDown>
+              {text}
+            </CardText>
+          </Flex>
+        )
+      default:
+        return null
+    }
+  }
 
   return (
     <Flex
@@ -84,20 +120,7 @@ export const Card: React.FC<ICardProps> = ({
       }}
     >
       {side === "front" ? (
-        <Flex
-          sx={{
-            flexDirection: "column",
-            justifyContent: "space-around",
-            height: "100%",
-            alignItems: "center",
-          }}
-        >
-          <CardText fontSize={fontSize.front}>{text}</CardText>
-          <Image sx={{ ...symbolStyles }} src={symbolToImg[symbol]} />
-          <CardText fontSize={fontSize.front} upsideDown>
-            {text}
-          </CardText>
-        </Flex>
+        getFrontCard(cardData)
       ) : (
         <Flex
           sx={{
@@ -120,40 +143,6 @@ export const Card: React.FC<ICardProps> = ({
           </Text>
         </Flex>
       )}
-    </Flex>
-  )
-}
-
-interface IWildCardProps {
-  symbols: CardSymbol[]
-  containerSx?: SxStyleProp
-}
-
-export const WildCard: React.FC<IWildCardProps> = ({ symbols, containerSx }) => {
-  const { containerCard: containerCardStyles, fontSize } = getStylesFromSize("medium")
-
-  return (
-    <Flex
-      sx={{
-        flexDirection: "column",
-        backgroundColor: theme.colors.white,
-        borderRadius: 10,
-        filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
-        justifyContent: "center",
-        alignItems: "center",
-        border: `2px solid ${theme.colors.white}`,
-        ...containerCardStyles,
-        ...containerSx,
-      }}
-    >
-      <Image sx={{ height: 40, width: 40, marginY: 10 }} src={symbolToImg[symbols[0]]} />
-      <CardText sx={{ borderBottom: `1px solid ${theme.colors.black}` }} fontSize={fontSize.front}>
-        WILD CARD
-      </CardText>
-      <CardText fontSize={fontSize.front} upsideDown>
-        WILD CARD
-      </CardText>
-      <Image sx={{ height: 40, width: 40, marginY: 10 }} src={symbolToImg[symbols[1]]} />
     </Flex>
   )
 }

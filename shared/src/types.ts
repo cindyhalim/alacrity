@@ -10,14 +10,23 @@ export enum CardSymbol {
   HASH = "HASH",
 }
 
+export enum CardColor {
+  BLACK = "#112633",
+  RED = "#C84C2B",
+  ORANGE = "#F78C5A",
+  NAVY = "#18414B",
+  SAND = "#D99E7F",
+}
 export interface IPlayingCard {
   type: "playing"
   symbol: CardSymbol
+  color: CardColor
   text: string
 }
 
 export interface IWildCard {
   type: "wildCard"
+  color: CardColor
   symbols: CardSymbol[]
 }
 
@@ -34,6 +43,7 @@ export interface IGamePlayer extends IPlayer {
 export interface IGame {
   id: string
   players: IGamePlayer[]
+  drawCardColor: CardColor
   totalDrawCardsRemaining: number
   wildCard: IWildCard
   currentPlayerId: string
