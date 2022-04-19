@@ -32,12 +32,10 @@ export const GameRoom: React.FC = () => {
   useEffect(() => {
     if (!totalDrawCardsRemaining) {
       dispatch(actions.setIsGameLoading(true))
-      if (getIsAdmin()) {
-        sendMessage({
-          action: FrontendWebsocketActions.GameEnded,
-          roomId,
-        })
-      }
+      sendMessage({
+        action: FrontendWebsocketActions.GameEnded,
+        roomId,
+      })
     }
   }, [dispatch, roomId, totalDrawCardsRemaining, sendMessage])
 
