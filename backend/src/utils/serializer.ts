@@ -1,4 +1,4 @@
-import { IPlayer, IGame } from "alacrity-shared"
+import { IPlayer, IGame, CardColor } from "alacrity-shared"
 import { database, IGameModel } from "@services"
 import { getPlayers } from "./mappers"
 
@@ -36,11 +36,12 @@ export const getSerializedCurrentGame = ({ game }: { game: IGameModel }): IGame 
       id: game.id,
       players,
       totalDrawCardsRemaining: drawPileLength,
-      drawCardColor: game.drawPile[drawPileLength - 1].color,
+      drawCardColor: game.drawPile[drawPileLength - 1]?.color || CardColor.NAVY,
       wildCard: game.wildCardPile[game.wildCardPile.length - 1],
       currentPlayerId: game.currentPlayerId,
     }
   } catch (e) {
+    console.log("error getting serialized current game", e)
     return null
   }
 }
