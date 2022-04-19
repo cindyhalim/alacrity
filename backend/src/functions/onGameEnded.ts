@@ -16,7 +16,7 @@ export const handler = async (event: APIGatewayEvent) => {
   } = event
   const { roomId }: IGameStartedEvent = JSON.parse(event.body)
 
-  console.log("onGameStarted: recieved route key:", routeKey)
+  console.log("onGameEnded: recieved route key:", routeKey)
 
   const room = await database.room.get({ roomId })
   const allPlayers = getPlayers(room)
