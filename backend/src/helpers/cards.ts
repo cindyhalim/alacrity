@@ -10,30 +10,19 @@ export const shuffle = (list: any[]) =>
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value)
 
-export const generateUniqueRandomFromList = ({ max, list }: { max: number; list: string[] }) => {
-  const set: Set<string> = new Set(list)
-  const unshuffledListFromSet = Array.from(set)
-  const shuffled = shuffle(unshuffledListFromSet).slice(0, max)
-
-  return shuffled
-}
-
 export const getDrawPile = ({
   cardsData,
 }: {
   cardsData: CardsDataJSON
 }): (IPlayingCard | IWildCard)[] => {
   const difficulties = Object.keys(cardsData)
-  const TOTAL_CARDS_PER_DIFFICULTY = TOTAL_PLAYING_CARDS / difficulties.length
-  const TOTAL_CARDS_PER_SYMBOL = Math.ceil(TOTAL_PLAYING_CARDS / TOTAL_WILD_CARDS)
-
   const symbols = Object.values(CardSymbol)
 
+  const TOTAL_CARDS_PER_DIFFICULTY = TOTAL_PLAYING_CARDS / difficulties.length
+  const TOTAL_CARDS_PER_SYMBOL = Math.ceil(TOTAL_PLAYING_CARDS / symbols.length)
+
   const selectedWords = difficulties.reduce((prev, curr) => {
-    const selectedWordsForDifficulty = generateUniqueRandomFromList({
-      max: TOTAL_CARDS_PER_DIFFICULTY,
-      list: cardsData[curr],
-    })
+    const selectedWordsForDifficulty = shuffle(cardsData[curr]).slice(0, TOTAL_CARDS_PER_DIFFICULTY)
 
     return [...prev, ...selectedWordsForDifficulty]
   }, [])
@@ -46,8 +35,8 @@ export const getDrawPile = ({
     CardColor.SAND,
   ]
 
-  const unshuffledDrawPile = symbols.reduce((prev: IPlayingCard[], curr) => {
-    const color = cardColors[Math.floor(Math.random() * cardColors.length)]
+  const unshuffledDrawPile = symbols.reduce((prev: IPlayingCard[], curr, idx) => {
+    const color = cardColors[(idx + 1) % cardColors.length]
     const currentCards = selectedWords.splice(0, TOTAL_CARDS_PER_SYMBOL).map(
       (card): IPlayingCard => ({
         type: "playing",
@@ -60,15 +49,15 @@ export const getDrawPile = ({
     return [...prev, ...currentCards]
   }, [])
 
-  const shuffledSymbolA = shuffle(symbols)
-  let shuffledSymbolB = shuffle(symbols)
-
   const wildCardPile: IWildCard[] = []
   const symbolSet = new Set()
 
   while (wildCardPile.length < TOTAL_WILD_CARDS) {
-    const symbolB = shuffledSymbolB.pop()
-    const symbolA = shuffledSymbolA.pop()
+    const shuffledSymbols = shuffle(symbols)
+    const a = Math.floor(Math.random() * shuffledSymbols.length)
+    const b = Math.floor(Math.random() * shuffledSymbols.length)
+    const symbolB = shuffledSymbols[b]
+    const symbolA = shuffledSymbols[a]
     const chosenSymbols = [symbolA, symbolB]
     const flippedChosenSymbols = [symbolB, symbolA]
 
@@ -86,12 +75,11 @@ export const getDrawPile = ({
       symbolSet.add(JSON.stringify(chosenSymbols))
       symbolSet.add(JSON.stringify(flippedChosenSymbols))
     } else {
-      shuffledSymbolB.push(symbolB)
-      shuffledSymbolA.push(symbolA)
-      shuffledSymbolB = shuffle(shuffledSymbolB)
+      ;[shuffledSymbols[a], shuffledSymbols[b]] = [shuffledSymbols[b], shuffledSymbols[a]]
     }
   }
 
   const drawPile = shuffle([...unshuffledDrawPile, ...wildCardPile])
+
   return drawPile
 }
