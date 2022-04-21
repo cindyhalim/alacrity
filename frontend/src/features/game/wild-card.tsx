@@ -13,7 +13,7 @@ export const WildCard: React.FC<IWildCard> = (wildCard) => {
     if (prevSymbols !== currSymbols) {
       addSequence()
     }
-  }, [currSymbols])
+  }, [currSymbols, addSequence, prevSymbols])
 
   return (
     <motion.div id="wild-card-animation" animate={cardAnimation}>
