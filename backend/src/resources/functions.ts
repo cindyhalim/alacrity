@@ -11,6 +11,16 @@ export const functions: Serverless["functions"] = {
       },
     ],
   },
+  healthCheck: {
+    handler: `src/functions/healthCheck.handler`,
+    events: [
+      {
+        websocket: {
+          route: "health_check",
+        },
+      },
+    ],
+  },
   onAdminJoined: {
     handler: `src/functions/onAdminJoined.handler`,
     events: [
