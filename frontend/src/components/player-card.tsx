@@ -68,7 +68,7 @@ export const PlayingCard: React.FC<IPlayingCardProps> = ({
     }
 
     addSequence()
-  }, [currTotal])
+  }, [currTotal, addSequence, prevTotal, removeSequence])
 
   return (
     <motion.div id={"animated-playing-card"} animate={cardAnimation}>
