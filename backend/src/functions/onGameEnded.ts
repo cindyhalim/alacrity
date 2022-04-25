@@ -16,11 +16,12 @@ export const handler = async (event: APIGatewayEvent) => {
   } = event
   const { roomId }: IGameStartedEvent = JSON.parse(event.body)
 
-  console.log("onGameStarted: recieved route key:", routeKey)
+  console.log("onGameEnded: recieved route key:", routeKey)
 
   const room = await database.room.get({ roomId })
   const allPlayers = getPlayers(room)
 
+  console.log("getting current game")
   let currentGame = getGame(room)
 
   const scores = currentGame.players
@@ -33,6 +34,7 @@ export const handler = async (event: APIGatewayEvent) => {
     )
     .sort((a, b) => b.score - a.score)
 
+  console.log("sending event:", BackendWebsocketActions.GameScoreUpdated)
   await Promise.all(
     currentGame.players.map((player) =>
       ws.sendMessage<IGameScoreUpdatedEvent>({
@@ -58,6 +60,7 @@ export const handler = async (event: APIGatewayEvent) => {
 
   const updatedGame = getSerializedCurrentGame({ game: currentGame })
 
+  console.log("sending event:", BackendWebsocketActions.GameUpdated)
   await Promise.all(
     allPlayers.map((player) =>
       ws.sendMessage<IGameUpdatedEvent>({
