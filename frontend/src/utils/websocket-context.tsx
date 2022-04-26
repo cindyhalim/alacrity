@@ -43,6 +43,16 @@ export const WSContextProvider: React.FC = ({ children }) => {
   }, [dispatch])
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      const healthCheckEvent: TFrontendWebsocketEvent = {
+        action: FrontendWebsocketActions.HealthCheck,
+      }
+      ws.current?.send(JSON.stringify(healthCheckEvent))
+    }, 45 * 1000)
+    return () => clearInterval(interval)
+  }, [ws.current])
+
+  useEffect(() => {
     const initialize = async () => {
       ws.current = new WebSocket(config.websocketUrl || "")
       ws.current.onmessage = (message) => {
@@ -95,7 +105,11 @@ export const WSContextProvider: React.FC = ({ children }) => {
           ws.current?.send(JSON.stringify(playerJoinedEvent))
         }
       }
+      ws.current.onclose = () => {
+        console.log("disconnected")
+      }
     }
+
     if (roomId) {
       initialize()
     }

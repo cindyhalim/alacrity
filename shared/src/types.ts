@@ -74,6 +74,7 @@ export enum FrontendWebsocketActions {
   CardDrawn = "card_drawn",
   CardWon = "card_won",
   GameEnded = "game_ended",
+  HealthCheck = "health_check",
 }
 
 // Backend events
@@ -148,6 +149,10 @@ export interface IGameEndedEvent {
   roomId: string
 }
 
+export interface IHealthCheckEvent {
+  action: FrontendWebsocketActions.HealthCheck
+}
+
 export type TFrontendWebsocketEvent =
   | IAdminJoinedEvent
   | IPlayerJoinedEvent
@@ -155,3 +160,4 @@ export type TFrontendWebsocketEvent =
   | ICardDrawnEvent
   | ICardWonEvent
   | IGameEndedEvent
+  | IHealthCheckEvent
